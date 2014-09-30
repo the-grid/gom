@@ -82,6 +82,19 @@ describe "DOM", ->
         ]
       expect($.render(render())).to.equal """<section><div id="1"></div><div id="2"></div><div id="3"></div><div id="4"></div></section>"""
 
+    it 'ignore falsey children', ->
+
+      render = ->
+        $ "section", {}, [
+          [null]
+          [[null]]
+          $ "div"
+          null
+          [[undefined]]
+        ]
+      expect($.render(render())).to.equal """<section><div></div></section>"""
+
+
     it 'empty tags', ->
 
       render = ->

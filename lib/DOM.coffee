@@ -20,6 +20,7 @@ module.exports = (hooks={}) ->
     result
 
   _render = (node) ->
+    return '' if !node
     return node if typeof node is 'string'
     return render node if node instanceof Array
     {tag,attrs,children} = node
