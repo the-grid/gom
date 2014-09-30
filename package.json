@@ -1,7 +1,7 @@
 {
   "name": "gom",
   "description": "Grid Object Model",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Dan Tocchini",
     "email": "d4@thegrid.io"
@@ -16,7 +16,9 @@
       "url": "undefined/blob/master/LICENSE-MIT"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "coffee-script": "^1.8.0"
+  },
   "devDependencies": {
     "chai": "~1.9.0",
     "grunt": "~0.4.1",

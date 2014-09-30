@@ -1,8 +1,8 @@
 chai = require 'chai' unless chai
 try
-  DOM = require '../lib/DOM'
+  DOM = require '../index'
 catch e
-  DOM = require 'gom/lib/DOM'
+  DOM = require 'gom'
 
 expect = chai.expect
 
