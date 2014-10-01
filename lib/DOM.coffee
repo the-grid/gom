@@ -23,6 +23,7 @@ module.exports = (hooks={}) ->
     return '' if !node
     return node if typeof node is 'string'
     return render node if node instanceof Array
+    return render node() if typeof node is 'function'
     {tag,attrs,children} = node
     return "" if !tag
     return """<#{tag}#{_renderAttr(attrs)}/>""" if emptyTags.indexOf(tag) >= 0

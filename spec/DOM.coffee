@@ -106,6 +106,26 @@ describe "DOM", ->
       expect($.render(render())).to.equal """<img class="img"/><hr class="hr"/><input class="input"/>"""
 
 
+    it 'functional children', ->
+
+      render = ->
+        [
+          ->
+            $ "img", {class:['img']}
+          [
+            ->
+              $ "hr", {class:['hr']}
+          ]
+          ->
+            html = ""
+            for str in ["hello","functional","offspring"]
+              html += " " + str
+            html.trim()
+
+        ]
+      expect($.render(render())).to.equal """<img class="img"/><hr class="hr"/>hello functional offspring"""
+
+
   describe "hooks", ->
 
     describe 'basics', ->
