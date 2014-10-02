@@ -36,18 +36,26 @@ module.exports = (hooks={}) ->
     parent.children.splice 0, 0, child
 
   $.mergeAttrs = (attrs1,attrs2) ->
+    # merge shared key values where value is same type, preferring attrs1, otherwise fallback to attrs2
     attrs = {}
     for key, val of attrs1
       attrs[key] = val
-    for key, val of attrs2
-      current = attrs[key]
-      if current
-        if (current instanceof Array) and (val instanceof Array)
-          attrs[key] = current.concat val
-        else if (typeof current is 'string') and (typeof val is 'string')
-          attrs[key] += current + " " + val
+    for key, v2 of attrs2
+      v1 = attrs[key]
+      if v1
+        if (v1 instanceof Array) and (v2 instanceof Array)
+          attrs[key] = v1.concat v2
+        else if (typeof v1 is 'string') and (typeof v2 is 'string')
+          attrs[key] += v1 + " " + v2
+        else if (typeof v1 is 'object') and (typeof v2 is 'object')
+          # clone to not disrupt $h!t up the closures
+          v2 = JSON.parse JSON.stringify v2
+          # prefer styles from attrs1
+          for innerKey, innerVal of v1
+            v2[innerKey] = innerVal
+          attrs[key] = v2
       else
-        attrs[key] = val
+        attrs[key] = v2
     return attrs
 
   $.mergeChildren = (children1=[],children2=[]) ->
@@ -88,11 +96,22 @@ module.exports = (hooks={}) ->
         html += render child
     return html
 
+  _renderStyles = (o) ->
+    return o unless typeof o is "object"
+    style = ""
+    for key, val of o
+      val = String(val) if typeof val is 'number'
+      style += key + ":" + val + "; "
+    return style.trim()
+
   _renderAttr = (o) ->
     attrs = ''
     for key, val of o
       continue unless notAttr.indexOf(key) is -1
-      val = String(val) if typeof val is 'number'
+      if key is 'style'
+        val = _renderStyles val
+      else
+        val = String(val) if typeof val is 'number'
       if val?.length > 0
         attrs += " " + key + '="'
         if val instanceof Array

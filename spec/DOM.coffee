@@ -125,6 +125,14 @@ describe "DOM", ->
         ]
       expect($.render(render())).to.equal """<img class="img"/><hr class="hr"/>hello functional offspring"""
 
+    it 'style attribute', ->
+
+      render = ->
+        [
+          $ "div", {id:'styled',style:{'background-color':"blue",'color':"hsl(0,0%,0%)", "line-height":1.5}}
+        ]
+      expect($.render(render())).to.equal """<div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>"""
+
 
   describe "hooks", ->
 
@@ -153,13 +161,15 @@ describe "DOM", ->
       $ = DOM(
 
         "cta": (attrs={}, children) ->
-          attrs = @mergeAttrs({class:['cta']},attrs)
+          attrs = @mergeAttrs(attrs,{class:['cta']})
           return @ 'button', attrs, children
 
         "post": (attrs={}, children) ->
           {title,subtitle} = attrs.data
 
-          attrs = @mergeAttrs({class:['post']},attrs)
+          defaultPostAttrs = { class:['post'], style:{'color':'red',opacity:0} }
+
+          attrs = @mergeAttrs(attrs, defaultPostAttrs)
 
           postChildren = [
             @ "h1", {}, title
@@ -173,12 +183,12 @@ describe "DOM", ->
       it '1 level', ->
 
         render = ->
-          $ 'post', {class:['featured'], data:{title:'Tis a post!',subtitle:'indeed it is'}},
+          $ 'post', {class:['featured'], style:{opacity:1}, data:{title:'Tis a post!',subtitle:'indeed it is'}},
             [
               $ 'cta', {class:['active']}, 'Buy Now'
             ]
 
-        expect($.render(render())).to.equal """<article class="post featured"><h1>Tis a post!</h1><h2>indeed it is</h2><button class="cta active">Buy Now</button></article>"""
+        expect($.render(render())).to.equal """<article class="featured post" style="color:red; opacity:1;"><h1>Tis a post!</h1><h2>indeed it is</h2><button class="active cta">Buy Now</button></article>"""
 
       it 'recursed', ->
 
@@ -186,10 +196,10 @@ describe "DOM", ->
           $ 'post', {class:['featured'], data:{title:'Tis a post!',subtitle:'indeed it is'}},
             [
               $ 'cta', {class:['active']}, 'Buy Now'
-              $ 'post', {data:{title:'Tis an inner post!',subtitle:'indeed it is'}}
+              $ 'post', {data:{title:'Tis an inner post!',subtitle:'indeed it is'}, style:{"color":"blue"}}
             ]
 
-        expect($.render(render())).to.equal """<article class="post featured"><h1>Tis a post!</h1><h2>indeed it is</h2><button class="cta active">Buy Now</button><article class="post"><h1>Tis an inner post!</h1><h2>indeed it is</h2></article></article>"""
+        expect($.render(render())).to.equal """<article class="featured post" style="color:red; opacity:0;"><h1>Tis a post!</h1><h2>indeed it is</h2><button class="active cta">Buy Now</button><article style="color:blue; opacity:0;" class="post"><h1>Tis an inner post!</h1><h2>indeed it is</h2></article></article>"""
 
 
 
