@@ -2,7 +2,7 @@ module.exports = (hooks={}) ->
 
   notAttr = ['children','data']
 
-  emptyTags = ['br','hr','meta','link','base','link','meta','hr','br','img','embed','param','area','col','input']
+  emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
 
   $ = (tag, attrs, children, rest...) ->
     hook = hooks[tag]
