@@ -125,6 +125,35 @@ describe "DOM", ->
         ]
       expect($.render(render())).to.equal """<img class="img"/><hr class="hr"/>hello functional offspring"""
 
+
+    it 'object children', ->
+
+      render = ->
+        [
+          {
+            tag: 'div'
+            attrs:
+              class:['box']
+              style:
+                color: 'red'
+              'data-special': 'sauce'
+            children: [
+              {
+                tag: 'img'
+                attrs:
+                  class: ['cover']
+              }
+            ]
+          }
+          ->
+            {
+              tag: 'section'
+            }
+
+        ]
+      expect($.render(render())).to.equal """<div class="box" style="color:red;" data-special="sauce"><img class="cover"/></div><section></section>"""
+
+
     it 'style attribute', ->
 
       render = ->

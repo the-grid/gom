@@ -25,6 +25,9 @@ module.exports = (hooks={}) ->
     return render node if node instanceof Array
     return render node() if typeof node is 'function'
     {tag,attrs,children} = node
+    tag or tag='div'
+    attrs or attrs={}
+    children or children=[]
     return "" if !tag
     return """<#{tag}#{_renderAttr(attrs)}/>""" if emptyTags.indexOf(tag) >= 0
     return """<#{tag}#{_renderAttr(attrs)}>#{_renderChildren(children)}</#{tag}>"""
@@ -67,7 +70,11 @@ module.exports = (hooks={}) ->
 
   class Node
 
-    constructor: (tag='div',attrs={},children=[])->
+    constructor: (tag,attrs,children)->
+      tag or tag='div'
+      attrs or attrs={}
+      children or children=[]
+
       @tag = tag
       @attrs = attrs
       @attrs.class or @attrs.class = []
