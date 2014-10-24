@@ -4,10 +4,10 @@ module.exports = (hooks={}) ->
 
   emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
 
-  $ = (tag, attrs, children, rest...) ->
+  $ = (tag, attributes, children, rest...) ->
     hook = hooks[tag]
-    return hook.apply $, [attrs, children, rest...] if hook
-    return new Node tag, attrs, children
+    return hook.apply $, [attributes, children, rest...] if hook
+    return new Node tag, attributes, children
 
   $.registerHook = (tag, cb) ->
     hooks[tag] = cb
@@ -24,13 +24,17 @@ module.exports = (hooks={}) ->
     return node if typeof node is 'string'
     return render node if node instanceof Array
     return render node() if typeof node is 'function'
-    {tag,attrs,children} = node
+
+    {tag,attributes,children} = node
+
+    # in case JSON passed
     tag or tag='div'
-    attrs or attrs={}
+    attributes or attributes={}
     children or children=[]
+
     return "" if !tag
-    return """<#{tag}#{_renderAttr(attrs)}/>""" if emptyTags.indexOf(tag) >= 0
-    return """<#{tag}#{_renderAttr(attrs)}>#{_renderChildren(children)}</#{tag}>"""
+    return """<#{tag}#{_renderAttr(attributes)}/>""" if emptyTags.indexOf(tag) >= 0
+    return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children)}</#{tag}>"""
 
   $.append = (parent,child) ->
     parent.children.push child
@@ -38,28 +42,28 @@ module.exports = (hooks={}) ->
   $.prepend = (parent,child) ->
     parent.children.splice 0, 0, child
 
-  $.mergeAttrs = (attrs1,attrs2) ->
-    # merge shared key values where value is same type, preferring attrs1, otherwise fallback to attrs2
-    attrs = {}
-    for key, val of attrs1
-      attrs[key] = val
-    for key, v2 of attrs2
-      v1 = attrs[key]
+  $.mergeattributes = (attributes1,attributes2) ->
+    # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
+    attributes = {}
+    for key, val of attributes1
+      attributes[key] = val
+    for key, v2 of attributes2
+      v1 = attributes[key]
       if v1
         if (v1 instanceof Array) and (v2 instanceof Array)
-          attrs[key] = v1.concat v2
+          attributes[key] = v1.concat v2
         else if (typeof v1 is 'string') and (typeof v2 is 'string')
-          attrs[key] += v1 + " " + v2
+          attributes[key] += v1 + " " + v2
         else if (typeof v1 is 'object') and (typeof v2 is 'object')
           # clone to not disrupt $h!t up the closures
           v2 = JSON.parse JSON.stringify v2
-          # prefer styles from attrs1
+          # prefer styles from attributes1
           for innerKey, innerVal of v1
             v2[innerKey] = innerVal
-          attrs[key] = v2
+          attributes[key] = v2
       else
-        attrs[key] = v2
-    return attrs
+        attributes[key] = v2
+    return attributes
 
   $.mergeChildren = (children1=[],children2=[]) ->
     if !(children1 instanceof Array)
@@ -68,20 +72,21 @@ module.exports = (hooks={}) ->
       children2 = [children2]
     return children1.concat children2
 
+
   class Node
 
-    constructor: (tag,attrs,children)->
+    constructor: (tag,attributes,children)->
       tag or tag='div'
-      attrs or attrs={}
+      attributes or attributes={}
       children or children=[]
 
       @tag = tag
-      @attrs = attrs
-      @attrs.class or @attrs.class = []
+      @attributes = attributes
+      @attributes.class or @attributes.class = []
 
-      if attrs.children
-        children = attrs.children
-        delete attrs.children
+      if attributes.children
+        children = attributes.children
+        delete attributes.children
 
       else if children? and !(children instanceof Array)
         children = [children]
@@ -112,7 +117,7 @@ module.exports = (hooks={}) ->
     return style.trim()
 
   _renderAttr = (o) ->
-    attrs = ''
+    attributes = ''
     for key, val of o
       continue unless notAttr.indexOf(key) is -1
       if key is 'style'
@@ -120,13 +125,21 @@ module.exports = (hooks={}) ->
       else
         val = String(val) if typeof val is 'number'
       if val?.length > 0
-        attrs += " " + key + '="'
+        attributes += " " + key + '="'
         if val instanceof Array
-          attrs += val.join(" ")
+          attributes += val.join(" ")
         else
-          attrs += val
-        attrs += '"'
-    return attrs
+          attributes += val
+        attributes += '"'
+    return attributes
+
+
+  # Tree Walking
+  # ---------------------------
+
+  $.querySelectorAll = (tree, selector) ->
+
+
 
   # ---------------------------
 

@@ -31,7 +31,7 @@ describe "DOM", ->
         'data-foo':'bar'
       expect($.render(node)).to.equal """<div class="hello" data-foo="bar"></div>"""
 
-    it 'child by attrs.children', ->
+    it 'child by attributes.children', ->
       child = $ 'div',
         id: 'baby'
         class:['child thing']
@@ -127,12 +127,12 @@ describe "DOM", ->
 
 
     it 'object children', ->
-
+      # Useful for parsing HTML to GOM JSON
       render = ->
         [
           {
             tag: 'div'
-            attrs:
+            attributes:
               class:['box']
               style:
                 color: 'red'
@@ -140,7 +140,7 @@ describe "DOM", ->
             children: [
               {
                 tag: 'img'
-                attrs:
+                attributes:
                   class: ['cover']
               }
             ]
@@ -168,8 +168,8 @@ describe "DOM", ->
     describe 'basics', ->
 
       $ = DOM(
-        "post": (attrs, children) ->
-          {title} = attrs.data
+        "post": (attributes, children) ->
+          {title} = attributes.data
           unless title
             throw new Error 'Missing post title'
           return @ 'div', {class:['post']}, title
@@ -189,16 +189,16 @@ describe "DOM", ->
 
       $ = DOM(
 
-        "cta": (attrs={}, children) ->
-          attrs = @mergeAttrs(attrs,{class:['cta']})
-          return @ 'button', attrs, children
+        "cta": (attributes={}, children) ->
+          attributes = @mergeattributes(attributes,{class:['cta']})
+          return @ 'button', attributes, children
 
-        "post": (attrs={}, children) ->
-          {title,subtitle} = attrs.data
+        "post": (attributes={}, children) ->
+          {title,subtitle} = attributes.data
 
-          defaultPostAttrs = { class:['post'], style:{'color':'red',opacity:0} }
+          defaultPostattributes = { class:['post'], style:{'color':'red',opacity:0} }
 
-          attrs = @mergeAttrs(attrs, defaultPostAttrs)
+          attributes = @mergeattributes(attributes, defaultPostattributes)
 
           postChildren = [
             @ "h1", {}, title
@@ -206,7 +206,7 @@ describe "DOM", ->
           ]
           children = @mergeChildren(postChildren,children)
 
-          return @ 'article', attrs, children
+          return @ 'article', attributes, children
       )
 
       it '1 level', ->
@@ -236,7 +236,7 @@ describe "DOM", ->
 
       $ = DOM(
 
-        "layout": (attrs, children="", {footer}) ->
+        "layout": (attributes, children="", {footer}) ->
 
           @ "html", {}, [
             @ "head"
@@ -248,7 +248,7 @@ describe "DOM", ->
             ]
           ]
 
-        "page-layout": (attrs, children) ->
+        "page-layout": (attributes, children) ->
 
           @ "layout", {},
             [
