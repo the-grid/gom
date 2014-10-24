@@ -3,7 +3,7 @@
   "description": "Grid Object Model",
   "author": "Dan Tocchini <d4@thegrid.io>",
   "repo": "the-grid/gom",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "keywords": [
   ],
   "dependencies": {
