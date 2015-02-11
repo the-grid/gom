@@ -20,6 +20,7 @@
     "coffee-script": "^1.8.0"
   },
   "devDependencies": {
+    "html-minifier": "~0.7.0",
     "chai": "~1.9.0",
     "grunt": "~0.4.1",
     "grunt-cafe-mocha": "~0.1.12",

@@ -49,7 +49,7 @@ module.exports = ->
 
     # Coding standards
     coffeelint:
-      components: ['Gruntfile.coffee', 'spec/*.coffee', 'lib/*.coffee']
+      components: ['Gruntfile.coffee', 'lib/*.coffee']
       options:
         'max_line_length':
           'level': 'ignore'

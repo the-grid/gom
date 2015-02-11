@@ -114,6 +114,8 @@ module.exports = (hooks={}) ->
     for key, val of o
       val = String(val) if typeof val is 'number'
       style += key + ":" + val + "; "
+    # remove last semi-colon and whitespace
+    style = style.slice(0,style.length-2)
     return style.trim()
 
   _renderAttr = (o) ->

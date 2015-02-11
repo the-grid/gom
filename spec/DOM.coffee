@@ -1,3 +1,4 @@
+minify = require('html-minifier').minify unless minify
 chai = require 'chai' unless chai
 try
   DOM = require '../index'
@@ -6,30 +7,45 @@ catch e
 
 expect = chai.expect
 
-describe "DOM", ->
+expectHTML = (gom,html) ->
+  renderer = DOM()
+  expect(renderer.render(gom))
+  .to
+  .equal minify( html, {collapseWhitespace:true, keepClosingSlash:true}) # dangerous!!
 
+toHTML = (name,gom,html) ->
+  it name, ->
+    expectHTML gom, html
+
+describe "DOM", ->
 
   describe "basics", ->
 
     $ = DOM()
 
-    it '<div>', ->
-      node = $ 'div'
-      expect($.render(node)).to.equal """<div></div>"""
+    toHTML '<div>',
+      $ 'div'
+      "<div></div>"
 
-    it 'defaults', ->
-      node = $ null, null, 'hello world'
-      expect($.render(node)).to.equal """<div>hello world</div>"""
+    toHTML 'defaults',
+      $ null, null, 'hello world'
+      """
+        <div>hello world</div>
+      """
 
-    it '<div>hello world</div>', ->
-      node = $ 'div', {}, ['hello world']
-      expect($.render(node)).to.equal """<div>hello world</div>"""
+    toHTML '<div>hello world</div>',
+      $ 'div', {}, ['hello world']
+      """
+        <div>hello world</div>
+      """
 
-    it '<div class="hello" data-foo="bar">', ->
-      node = $ 'div',
+    toHTML '<div class="hello" data-foo="bar">',
+      $ 'div',
         class:['hello']
         'data-foo':'bar'
-      expect($.render(node)).to.equal """<div class="hello" data-foo="bar"></div>"""
+      """
+        <div class="hello" data-foo="bar"></div>
+      """
 
     it 'child by attributes.children', ->
       child = $ 'div',
@@ -39,7 +55,12 @@ describe "DOM", ->
         id: 'mommy'
         class:['parent thing']
         children:[child]
-      expect($.render(node)).to.equal """<div id="mommy" class="parent thing"><div id="baby" class="child thing"></div></div>"""
+      expectHTML node, 
+        """
+          <div id="mommy" class="parent thing">
+            <div id="baby" class="child thing"></div>
+          </div>
+        """
 
     it '3 level child by children param', ->
       node = $ "section", {id:'grand'},
@@ -49,7 +70,14 @@ describe "DOM", ->
               $ "span", {id:'baby', class:['child thing']}
             ]
         ]
-      expect($.render(node)).to.equal """<section id="grand"><article id="mommy" class="parent thing"><span id="baby" class="child thing"></span></article></section>"""
+      expectHTML node, 
+        """
+          <section id="grand">
+            <article id="mommy" class="parent thing">
+              <span id="baby" class="child thing"></span>
+            </article>
+          </section>
+        """
 
     it 'child by append', ->
       node = $ 'div',
@@ -58,33 +86,47 @@ describe "DOM", ->
       $.append node, $ 'div',
         id: 'baby'
         class:['child thing']
-      expect($.render(node)).to.equal """<div id="mommy" class="parent thing"><div id="baby" class="child thing"></div></div>"""
+      expectHTML node, 
+        """
+          <div id="mommy" class="parent thing">
+            <div id="baby" class="child thing"></div>
+          </div>
+        """
 
     it 'mixed children', ->
       node = $ "a", {href:'google.com'}, ["this is ",$("span",{},"awesome"),"... for reals!"]
-      expect($.render(node)).to.equal """<a href="google.com">this is <span>awesome</span>... for reals!</a>"""
+      expectHTML node, 
+        """
+          <a href="google.com">this is <span>awesome</span>... for reals!</a>
+        """
 
     it 'render node array', ->
       nodes = [
         $ "head"
         $ "body"
       ]
-      expect($.render(nodes)).to.equal """<head></head><body></body>"""
+      expectHTML nodes, 
+        """
+          <head></head>
+          <body></body>
+        """
 
     it 'ignore nested children arrays', ->
-
-      render = ->
+      build = ->
         $ "section", {}, [
           [[[$ "div", id:1]]]
           [[$ "div", id:2]]
           [$ "div", id:3]
           $ "div", {id:4}
         ]
-      expect($.render(render())).to.equal """<section><div id="1"></div><div id="2"></div><div id="3"></div><div id="4"></div></section>"""
+      expectHTML build(), 
+        """
+          <section><div id="1"></div><div id="2"></div><div id="3"></div><div id="4"></div></section>
+        """
 
     it 'ignore falsey children', ->
 
-      render = ->
+      build = ->
         $ "section", {}, [
           [null]
           [[null]]
@@ -92,23 +134,32 @@ describe "DOM", ->
           null
           [[undefined]]
         ]
-      expect($.render(render())).to.equal """<section><div></div></section>"""
+      expectHTML build(), 
+        """
+          <section>
+            <div></div>
+          </section>
+        """
 
 
     it 'empty tags', ->
-
-      render = ->
+      build = ->
         [
           $ "img", {class:['img']}
           $ "hr", {class:['hr']}
           $ "input", {class:['input']}
         ]
-      expect($.render(render())).to.equal """<img class="img"/><hr class="hr"/><input class="input"/>"""
+      expectHTML build(),
+        """
+          <img class="img"/>
+          <hr class="hr"/>
+          <input class="input"/>
+        """
 
 
     it 'functional children', ->
 
-      render = ->
+      build = ->
         [
           ->
             $ "img", {class:['img']}
@@ -123,12 +174,16 @@ describe "DOM", ->
             html.trim()
 
         ]
-      expect($.render(render())).to.equal """<img class="img"/><hr class="hr"/>hello functional offspring"""
+      expectHTML build(), 
+        """
+          <img class="img"/>
+          <hr class="hr"/>hello functional offspring
+        """
 
 
     it 'object children', ->
       # Useful for parsing HTML to GOM JSON
-      render = ->
+      build = ->
         [
           {
             tag: 'div'
@@ -151,16 +206,24 @@ describe "DOM", ->
             }
 
         ]
-      expect($.render(render())).to.equal """<div class="box" style="color:red;" data-special="sauce"><img class="cover"/></div><section></section>"""
+      expectHTML build(), 
+        """
+          <div class="box" style="color:red;" data-special="sauce">
+            <img class="cover"/>
+          </div>
+          <section></section>
+        """
 
 
     it 'style attribute', ->
-
-      render = ->
+      build = ->
         [
           $ "div", {id:'styled',style:{'background-color':"blue",'color':"hsl(0,0%,0%)", "line-height":1.5}}
         ]
-      expect($.render(render())).to.equal """<div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>"""
+      expectHTML build(), 
+        """
+          <div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>
+        """
 
 
   describe "hooks", ->
@@ -179,7 +242,10 @@ describe "DOM", ->
 
         node = $ 'post', {data:{title:'Tis a post!'}}
 
-        expect($.render(node)).to.equal """<div class="post">Tis a post!</div>"""
+        expectHTML node, 
+          """
+            <div class="post">Tis a post!</div>
+          """
 
       it 'fails with missing data', ->
 
@@ -210,28 +276,39 @@ describe "DOM", ->
       )
 
       it '1 level', ->
-
-        render = ->
+        build = ->
           $ 'post', {class:['featured'], style:{opacity:1}, data:{title:'Tis a post!',subtitle:'indeed it is'}},
             [
               $ 'cta', {class:['active']}, 'Buy Now'
             ]
-
-        expect($.render(render())).to.equal """<article class="featured post" style="color:red; opacity:1;"><h1>Tis a post!</h1><h2>indeed it is</h2><button class="active cta">Buy Now</button></article>"""
+        expectHTML build(), 
+          """
+            <article class="featured post" style="color:red; opacity:1;">
+              <h1>Tis a post!</h1>
+              <h2>indeed it is</h2>
+              <button class="active cta">Buy Now</button>
+            </article>
+          """
 
       it 'recursed', ->
-
-        render = ->
+        build = ->
           $ 'post', {class:['featured'], data:{title:'Tis a post!',subtitle:'indeed it is'}},
             [
               $ 'cta', {class:['active']}, 'Buy Now'
               $ 'post', {data:{title:'Tis an inner post!',subtitle:'indeed it is'}, style:{"color":"blue"}}
             ]
-
-        expect($.render(render())).to.equal """<article class="featured post" style="color:red; opacity:0;"><h1>Tis a post!</h1><h2>indeed it is</h2><button class="active cta">Buy Now</button><article style="color:blue; opacity:0;" class="post"><h1>Tis an inner post!</h1><h2>indeed it is</h2></article></article>"""
-
-
-
+        expectHTML build(), 
+          """
+            <article class="featured post" style="color:red; opacity:0;">
+              <h1>Tis a post!</h1>
+              <h2>indeed it is</h2>
+              <button class="active cta">Buy Now</button>
+              <article style="color:blue; opacity:0;" class="post">
+                <h1>Tis an inner post!</h1>
+                <h2>indeed it is</h2>
+              </article>
+            </article>
+          """
     describe 'hooks > includes & extends w/ blocks', ->
 
       $ = DOM(
@@ -259,18 +336,27 @@ describe "DOM", ->
               [
                 @ "a", {}, "In da footah"
               ]
-
-
       )
 
       it "works", ->
 
-        render = ->
+        build = ->
           $ "page-layout", {},
             [
               $ "article", {}, "page 1 article 1"
             ]
 
-        expect($.render(render())).to.equal """<html><head></head><body><header class="page-header"></header><article>page 1 article 1</article><footer><a>In da footah</a></footer></body></html>"""
+        expectHTML build(), 
+          """
+            <html>
+              <head>
+              </head>
+              <body>
+                <header class="page-header"></header>
+                <article>page 1 article 1</article>
+                <footer><a>In da footah</a></footer>
+              </body>
+            </html>
+          """
 
 
