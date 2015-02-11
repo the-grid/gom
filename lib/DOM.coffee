@@ -37,12 +37,14 @@ module.exports = (hooks={}) ->
     return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children)}</#{tag}>"""
 
   $.append = (parent,child) ->
+    parent.children = [] if !parent.children?
     parent.children.push child
 
   $.prepend = (parent,child) ->
+    parent.children = [] if !parent.children?
     parent.children.splice 0, 0, child
 
-  $.mergeattributes = (attributes1,attributes2) ->
+  $.mergeattributes = (attributes1={},attributes2={}) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
     for key, val of attributes1
@@ -55,6 +57,7 @@ module.exports = (hooks={}) ->
         else if (typeof v1 is 'string') and (typeof v2 is 'string')
           attributes[key] += v1 + " " + v2
         else if (typeof v1 is 'object') and (typeof v2 is 'object')
+          # TODO: not clone
           # clone to not disrupt $h!t up the closures
           v2 = JSON.parse JSON.stringify v2
           # prefer styles from attributes1
@@ -77,21 +80,24 @@ module.exports = (hooks={}) ->
 
     constructor: (tag,attributes,children)->
       tag or tag='div'
-      attributes or attributes={}
-      children or children=[]
+      #attributes or attributes={}
+      #children or children=[]
 
       @tag = tag
-      @attributes = attributes
-      @attributes.class or @attributes.class = []
+      
+      if attributes
+        
+        @attributes = attributes
+        #@attributes.class or @attributes.class = []
 
-      if attributes.children
+      if attributes?.children
         children = attributes.children
         delete attributes.children
 
       else if children? and !(children instanceof Array)
         children = [children]
 
-      @children = children
+      @children = children if children
 
       @
 
@@ -120,6 +126,7 @@ module.exports = (hooks={}) ->
 
   _renderAttr = (o) ->
     attributes = ''
+    return attributes if !o
     for key, val of o
       continue unless notAttr.indexOf(key) is -1
       if key is 'style'
