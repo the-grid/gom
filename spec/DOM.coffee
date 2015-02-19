@@ -5,7 +5,7 @@ try
 catch e
   DOM = require 'gom'
 
-expect = chai.expect
+{expect,assert} = chai
 
 expectHTML = (gom,html) ->
   renderer = DOM()
@@ -17,7 +17,7 @@ toHTML = (name,gom,html) ->
   it name, ->
     expectHTML gom, html
 
-describe "DOM", ->
+describe "GOM", ->
 
   describe "basics", ->
 
@@ -55,7 +55,7 @@ describe "DOM", ->
         id: 'mommy'
         class:['parent thing']
         children:[child]
-      expectHTML node, 
+      expectHTML node,
         """
           <div id="mommy" class="parent thing">
             <div id="baby" class="child thing"></div>
@@ -70,7 +70,7 @@ describe "DOM", ->
               $ "span", {id:'baby', class:['child thing']}
             ]
         ]
-      expectHTML node, 
+      expectHTML node,
         """
           <section id="grand">
             <article id="mommy" class="parent thing">
@@ -86,7 +86,7 @@ describe "DOM", ->
       $.append node, $ 'div',
         id: 'baby'
         class:['child thing']
-      expectHTML node, 
+      expectHTML node,
         """
           <div id="mommy" class="parent thing">
             <div id="baby" class="child thing"></div>
@@ -95,7 +95,7 @@ describe "DOM", ->
 
     it 'mixed children', ->
       node = $ "a", {href:'google.com'}, ["this is ",$("span",{},"awesome"),"... for reals!"]
-      expectHTML node, 
+      expectHTML node,
         """
           <a href="google.com">this is <span>awesome</span>... for reals!</a>
         """
@@ -105,7 +105,7 @@ describe "DOM", ->
         $ "head"
         $ "body"
       ]
-      expectHTML nodes, 
+      expectHTML nodes,
         """
           <head></head>
           <body></body>
@@ -119,7 +119,7 @@ describe "DOM", ->
           [$ "div", id:3]
           $ "div", {id:4}
         ]
-      expectHTML build(), 
+      expectHTML build(),
         """
           <section><div id="1"></div><div id="2"></div><div id="3"></div><div id="4"></div></section>
         """
@@ -134,7 +134,7 @@ describe "DOM", ->
           null
           [[undefined]]
         ]
-      expectHTML build(), 
+      expectHTML build(),
         """
           <section>
             <div></div>
@@ -174,7 +174,7 @@ describe "DOM", ->
             html.trim()
 
         ]
-      expectHTML build(), 
+      expectHTML build(),
         """
           <img class="img"/>
           <hr class="hr"/>hello functional offspring
@@ -206,7 +206,7 @@ describe "DOM", ->
             }
 
         ]
-      expectHTML build(), 
+      expectHTML build(),
         """
           <div class="box" style="color:red;" data-special="sauce">
             <img class="cover"/>
@@ -220,143 +220,307 @@ describe "DOM", ->
         [
           $ "div", {id:'styled',style:{'background-color':"blue",'color':"hsl(0,0%,0%)", "line-height":1.5}}
         ]
-      expectHTML build(), 
+      expectHTML build(),
         """
           <div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>
         """
 
 
-  describe "hooks", ->
+describe "hooks", ->
 
-    describe 'basics', ->
+  describe 'basics', ->
 
-      $ = DOM(
-        "post": (attributes, children) ->
-          {title} = attributes.data
-          unless title
-            throw new Error 'Missing post title'
-          return @ 'div', {class:['post']}, title
-      )
+    $ = DOM(
+      "post": (attributes, children) ->
+        {title} = attributes.data
+        unless title
+          throw new Error 'Missing post title'
+        return @ 'div', {class:['post']}, title
+    )
 
-      it 'works', ->
+    it 'works', ->
 
-        node = $ 'post', {data:{title:'Tis a post!'}}
+      node = $ 'post', {data:{title:'Tis a post!'}}
 
-        expectHTML node, 
-          """
-            <div class="post">Tis a post!</div>
-          """
+      expectHTML node,
+        """
+          <div class="post">Tis a post!</div>
+        """
 
-      it 'fails with missing data', ->
+    it 'fails with missing data', ->
 
-        expect(-> $('post', {data:{}})).to.throw Error
+      expect(-> $('post', {data:{}})).to.throw Error
 
-    describe 'hooks with merges', ->
+  describe 'hooks with merges', ->
 
-      $ = DOM(
+    $ = DOM(
 
-        "cta": (attributes={}, children) ->
-          attributes = @mergeattributes(attributes,{class:['cta']})
-          return @ 'button', attributes, children
+      "cta": (attributes={}, children) ->
+        attributes = @mergeattributes(attributes,{class:['cta']})
+        return @ 'button', attributes, children
 
-        "post": (attributes={}, children) ->
-          {title,subtitle} = attributes.data
+      "post": (attributes={}, children) ->
+        {title,subtitle} = attributes.data
 
-          defaultPostattributes = { class:['post'], style:{'color':'red',opacity:0} }
+        defaultPostattributes = { class:['post'], style:{'color':'red',opacity:0} }
 
-          attributes = @mergeattributes(attributes, defaultPostattributes)
+        attributes = @mergeattributes(attributes, defaultPostattributes)
 
-          postChildren = [
-            @ "h1", {}, title
-            @ "h2", {}, subtitle
+        postChildren = [
+          @ "h1", {}, title
+          @ "h2", {}, subtitle
+        ]
+        children = @mergeChildren(postChildren,children)
+
+        return @ 'article', attributes, children
+    )
+
+    it '1 level', ->
+      build = ->
+        $ 'post', {class:['featured'], style:{opacity:1}, data:{title:'Tis a post!',subtitle:'indeed it is'}},
+          [
+            $ 'cta', {class:['active']}, 'Buy Now'
           ]
-          children = @mergeChildren(postChildren,children)
+      expectHTML build(),
+        """
+          <article class="featured post" style="color:red; opacity:1;">
+            <h1>Tis a post!</h1>
+            <h2>indeed it is</h2>
+            <button class="active cta">Buy Now</button>
+          </article>
+        """
 
-          return @ 'article', attributes, children
-      )
-
-      it '1 level', ->
-        build = ->
-          $ 'post', {class:['featured'], style:{opacity:1}, data:{title:'Tis a post!',subtitle:'indeed it is'}},
-            [
-              $ 'cta', {class:['active']}, 'Buy Now'
-            ]
-        expectHTML build(), 
-          """
-            <article class="featured post" style="color:red; opacity:1;">
-              <h1>Tis a post!</h1>
+    it 'recursed', ->
+      build = ->
+        $ 'post', {class:['featured'], data:{title:'Tis a post!',subtitle:'indeed it is'}},
+          [
+            $ 'cta', {class:['active']}, 'Buy Now'
+            $ 'post', {data:{title:'Tis an inner post!',subtitle:'indeed it is'}, style:{"color":"blue"}}
+          ]
+      expectHTML build(),
+        """
+          <article class="featured post" style="color:red; opacity:0;">
+            <h1>Tis a post!</h1>
+            <h2>indeed it is</h2>
+            <button class="active cta">Buy Now</button>
+            <article style="color:blue; opacity:0;" class="post">
+              <h1>Tis an inner post!</h1>
               <h2>indeed it is</h2>
-              <button class="active cta">Buy Now</button>
             </article>
-          """
+          </article>
+        """
+  describe 'hooks > includes & extends w/ blocks', ->
 
-      it 'recursed', ->
-        build = ->
-          $ 'post', {class:['featured'], data:{title:'Tis a post!',subtitle:'indeed it is'}},
-            [
-              $ 'cta', {class:['active']}, 'Buy Now'
-              $ 'post', {data:{title:'Tis an inner post!',subtitle:'indeed it is'}, style:{"color":"blue"}}
-            ]
-        expectHTML build(), 
-          """
-            <article class="featured post" style="color:red; opacity:0;">
-              <h1>Tis a post!</h1>
-              <h2>indeed it is</h2>
-              <button class="active cta">Buy Now</button>
-              <article style="color:blue; opacity:0;" class="post">
-                <h1>Tis an inner post!</h1>
-                <h2>indeed it is</h2>
-              </article>
-            </article>
-          """
-    describe 'hooks > includes & extends w/ blocks', ->
+    $ = DOM(
 
-      $ = DOM(
+      "layout": (attributes, children="", {footer}) ->
 
-        "layout": (attributes, children="", {footer}) ->
-
-          @ "html", {}, [
-            @ "head"
-            @ "body", {}, [
-              children
-              @ "footer", {}, [
-                footer
-              ]
+        @ "html", {}, [
+          @ "head"
+          @ "body", {}, [
+            children
+            @ "footer", {}, [
+              footer
             ]
           ]
+        ]
 
-        "page-layout": (attributes, children) ->
+      "page-layout": (attributes, children) ->
 
-          @ "layout", {},
+        @ "layout", {},
+          [
+            @ "header", {class:['page-header']}
+            children
+          ],
+          footer:
             [
-              @ "header", {class:['page-header']}
-              children
-            ],
-            footer:
-              [
-                @ "a", {}, "In da footah"
-              ]
-      )
+              @ "a", {}, "In da footah"
+            ]
+    )
 
-      it "works", ->
+    it "works", ->
 
-        build = ->
-          $ "page-layout", {},
+      build = ->
+        $ "page-layout", {},
+          [
+            $ "article", {}, "page 1 article 1"
+          ]
+
+      expectHTML build(),
+        """
+          <html>
+            <head>
+            </head>
+            <body>
+              <header class="page-header"></header>
+              <article>page 1 article 1</article>
+              <footer><a>In da footah</a></footer>
+            </body>
+          </html>
+        """
+
+
+
+
+
+describe "Transformers", ->
+
+  describe 'wrapping', ->
+
+    $ = DOM()
+
+    tree = [
+      $ 'section', null, [
+        $ 'article', null, [
+          $ 'p', null, [
+            "hello, I am "
+            $ 'a', {}, "Molly"
+            "!"
+          ]
+        ]
+        $ 'article', null, [
+          $ 'p', null, [
+            "hello, I am "
+            $ 'a', {}, "Molly"
+            "!"
+          ]
+        ]
+      ]
+      $ 'a', {}, "Molly"
+      " rocks!"
+    ]
+
+    it 'wrap link tags / renders html', ->
+      tree = $.transform tree, [
+        "a": (node) ->
+          return $ 'span', {class:['wrap']}, [node]
+      ]
+      expectHTML tree,
+        """
+          <section>
+            <article>
+              <p>hello, I am <span class="wrap"><a>Molly</a></span>!</p>
+            </article>
+            <article>
+              <p>hello, I am <span class="wrap"><a>Molly</a></span>!</p>
+            </article>
+          </section>
+          <span class="wrap"><a>Molly</a></span> rocks!
+        """
+
+    it 'unwrap link tags / renders html', ->
+      transformations = [
+        "span": (node) ->
+          return node unless 'wrap' in node.attributes.class
+          {children} = node
+          children or children = []
+          linkNode = null
+          for child in children
+            if child.tag is 'a'
+              linkNode = child
+              break
+          return linkNode if linkNode
+          return node
+      ]
+      tree = $.transform(tree, transformations)
+      expectHTML tree,
+        """
+          <section>
+            <article>
+              <p>hello, I am <a>Molly</a>!</p>
+            </article>
+            <article>
+              <p>hello, I am <a>Molly</a>!</p>
+            </article>
+          </section>
+          <a>Molly</a> rocks!
+        """
+
+    it 'only wrap <a> that are descdents of <article>', ->
+      tree = $.transform tree, [
+        (node) ->
+          return node unless node.tag is 'article'
+          return $.transform node, [
+            "a": (node) ->
+              return $ 'span', {class:['wrap']}, [node]
+          ]
+      ]
+      expectHTML tree,
+        """
+          <section>
+            <article>
+              <p>hello, I am <span class="wrap"><a>Molly</a></span>!</p>
+            </article>
+            <article>
+              <p>hello, I am <span class="wrap"><a>Molly</a></span>!</p>
+            </article>
+          </section>
+          <a>Molly</a> rocks!
+        """
+
+  describe 'custom tag transformers', ->
+
+    $ = DOM()
+
+    test = (transformations) ->
+
+      tree = null
+
+      it 'builds ast', ->
+        tree = $ 'post', {data:{title:'Tis parent post!'}},
+          [
+            $ 'post', {data:{title:'Tis child post!'}}
+          ]
+
+        expect(tree).to.eql
+          tag: 'post'
+          attributes:data:{title:'Tis parent post!'}
+          children:
             [
-              $ "article", {}, "page 1 article 1"
+              tag: 'post'
+              attributes:data:{title:'Tis child post!'}
             ]
 
-        expectHTML build(), 
-          """
-            <html>
-              <head>
-              </head>
-              <body>
-                <header class="page-header"></header>
-                <article>page 1 article 1</article>
-                <footer><a>In da footah</a></footer>
-              </body>
-            </html>
-          """
+      it 'transforms ast', ->
+        tree = $.transform tree, transformations
+        expect(tree).to.eql
+          children:
+            [
+                'Tis parent post!'
+              ,
+                children:
+                  [
+                    'Tis child post!'
+                  ]
+                tag: 'div'
+                attributes:class:['post']
+            ]
+          tag: 'div'
+          attributes:class:['post']
 
 
+      it 'renders html', ->
+        expectHTML tree,
+          """
+            <div class="post">Tis parent post!<div class="post">Tis child post!</div></div>
+          """
+
+    describe "callback transformation", ->
+      test [
+        (node) ->
+          return node unless node.tag is 'post'
+          {attributes, children} = node
+          children or children = []
+          return @ 'div', {class:['post']}, [attributes?.data?.title].concat children
+      ]
+
+    describe "key-val selector transformation", ->
+      test [
+        "post": ({attributes,children}) ->
+          children or children = []
+          return @ 'div', {class:['post']}, [attributes?.data?.title].concat children
+      ]
+
+    #it 'fails with missing data', ->
+    #
+    #  expect(-> $('post', {data:{}})).to.throw Error

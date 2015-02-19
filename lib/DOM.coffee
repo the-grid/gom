@@ -19,6 +19,47 @@ module.exports = (hooks={}) ->
       result += _render node
     result
 
+  _transformNodes = (nodes, transformations) ->
+    newNodes = []
+    for node in nodes
+      newNode = transform node, transformations
+      # removes falsy children
+      newNodes.push(newNode) if newNode
+    newNodes
+
+  _transformNode = (node, transformations) ->
+
+    # recurse children first
+    # otherwise wrapping transformations = infinite loop
+    if node.children?
+      node.children = transform node.children, transformations
+
+    for t in transformations
+
+      if typeof t is 'function'
+        node = t.call $, node
+
+      else if typeof t is 'object'
+        for selector, callback of t
+          node = callback.call($,node) if node.tag is selector
+
+    node
+
+  transform = (nodes, transformations) ->
+    # return if falsy child
+    return nodes unless nodes?
+
+    return _transformNodes(nodes, transformations) if nodes instanceof Array
+
+    # if child is function, evaluate it
+    return transform(node(), transformations) if typeof node is 'function'
+
+    return _transformNode nodes, transformations
+
+  $.transform = (nodes, transformations) ->
+    throw new Error "GOM Transformations must be an Array" unless transformations instanceof Array
+    return transform nodes, transformations
+
   _render = (node) ->
     return '' if !node
     return node if typeof node is 'string'
@@ -84,9 +125,9 @@ module.exports = (hooks={}) ->
       #children or children=[]
 
       @tag = tag
-      
+
       if attributes
-        
+
         @attributes = attributes
         #@attributes.class or @attributes.class = []
 
