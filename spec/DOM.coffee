@@ -1,14 +1,14 @@
 minify = require('html-minifier').minify unless minify
 chai = require 'chai' unless chai
 try
-  DOM = require '../index'
+  GOM = require '../index'
 catch e
-  DOM = require 'gom'
+  GOM = require 'gom'
 
 {expect,assert} = chai
 
 expectHTML = (gom,html) ->
-  renderer = DOM()
+  renderer = GOM()
   expect(renderer.render(gom))
   .to
   .equal minify( html, {collapseWhitespace:true, keepClosingSlash:true}) # dangerous!!
@@ -17,11 +17,24 @@ toHTML = (name,gom,html) ->
   it name, ->
     expectHTML gom, html
 
+
+#          _              _            _   _       
+#         /\ \           /\ \         /\_\/\_\ _   
+#        /  \ \         /  \ \       / / / / //\_\ 
+#       / /\ \_\       / /\ \ \     /\ \/ \ \/ / / 
+#      / / /\/_/      / / /\ \ \   /  \____\__/ /  
+#     / / / ______   / / /  \ \_\ / /\/________/   
+#    / / / /\_____\ / / /   / / // / /\/_// / /    
+#   / / /  \/____ // / /   / / // / /    / / /     
+#  / / /_____/ / // / /___/ / // / /    / / /      
+# / / /______\/ // / /____\/ / \/_/    / / /       
+# \/___________/ \/_________/          \/_/        
+                                                 
 describe "GOM", ->
 
   describe "basics", ->
 
-    $ = DOM()
+    $ = GOM()
 
     toHTML '<div>',
       $ 'div'
@@ -226,11 +239,20 @@ describe "GOM", ->
         """
 
 
+
+
+#  _   _             _        
+# | | | | ___   ___ | | _____ 
+# | |_| |/ _ \ / _ \| |/ / __|
+# |  _  | (_) | (_) |   <\__ \
+# |_| |_|\___/ \___/|_|\_\___/
+#
+                             
 describe "hooks", ->
 
   describe 'basics', ->
 
-    $ = DOM(
+    $ = GOM(
       "post": (attributes, children) ->
         {title} = attributes.data
         unless title
@@ -253,7 +275,7 @@ describe "hooks", ->
 
   describe 'hooks with merges', ->
 
-    $ = DOM(
+    $ = GOM(
 
       "cta": (attributes={}, children) ->
         attributes = @mergeattributes(attributes,{class:['cta']})
@@ -311,7 +333,7 @@ describe "hooks", ->
         """
   describe 'hooks > includes & extends w/ blocks', ->
 
-    $ = DOM(
+    $ = GOM(
 
       "layout": (attributes, children="", {footer}) ->
 
@@ -361,13 +383,17 @@ describe "hooks", ->
 
 
 
-
+#  _____                     __                                    
+# |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___   ___ _ __ ___ 
+#   | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \ / _ \ '__/ __|
+#   | || | | (_| | | | \__ \  _| (_) | |  | | | | | |  __/ |  \__ \
+#   |_||_|  \__,_|_| |_|___/_|  \___/|_|  |_| |_| |_|\___|_|  |___/                           
 
 describe "Transformers", ->
 
   describe 'wrapping', ->
 
-    $ = DOM()
+    $ = GOM()
 
     tree = [
       $ 'section', null, [
@@ -460,7 +486,7 @@ describe "Transformers", ->
 
   describe 'custom tag transformers', ->
 
-    $ = DOM()
+    $ = GOM()
 
     test = (transformations) ->
 
