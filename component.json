@@ -12,7 +12,7 @@
     "https://raw.githubusercontent.com"
   ],
   "scripts": [
-    "lib/DOM.coffee",
+    "lib/GOM.coffee",
     "index.js"
   ]
 }

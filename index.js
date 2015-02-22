@@ -8,4 +8,4 @@ if (typeof process !== 'undefined' && process.execPath && process.execPath.index
   require('coffee-script/register');
 }
 
-module.exports = require('./lib/DOM');
+module.exports = require('./lib/GOM');
