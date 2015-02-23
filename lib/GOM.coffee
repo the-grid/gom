@@ -23,9 +23,9 @@ module.exports = (hooks={}) ->
   $.notAttr = ['children','data']
   $.emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
     
-  $ = require('./mixins/helpers')($)
-  $ = require('./mixins/render')($)
-  $ = require('./mixins/transform')($)
+  require('./mixins/helpers')($)
+  require('./mixins/render')($)
+  require('./mixins/transform')($)
 
   class Node
 
@@ -33,26 +33,20 @@ module.exports = (hooks={}) ->
       tag or tag='div'
       #attributes or attributes={}
       #children or children=[]
-
       @tag = tag
 
       if attributes
-
         @attributes = attributes
         #@attributes.class or @attributes.class = []
 
       if attributes?.children
         children = attributes.children
         delete attributes.children
-
       else if children? and !(children instanceof Array)
         children = [children]
 
       @children = children if children
 
       @
-  
-
-  # ---------------------------
 
   return $
