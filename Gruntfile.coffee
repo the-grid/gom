@@ -5,20 +5,22 @@ module.exports = ->
 
     # CoffeeScript compilation of tests
     coffee:
+      lib:
+        options:
+          bare: true
+        expand: true
+        cwd: './'
+        src: ['./lib/**/*.coffee']
+        dest: 'browser'
+        ext: '.js'
       spec:
         options:
           bare: true
         expand: true
-        cwd: 'spec'
-        src: ['**.coffee']
-        dest: 'spec'
+        cwd: './'
+        src: ['./spec/**/*.coffee']
+        dest: 'browser'
         ext: '.js'
-
-    # Browser build of NoFlo
-    noflo_browser:
-      build:
-        files:
-          'browser/gom.js': ['component.json']
 
     # JavaScript minification for the browser
     uglify:
@@ -49,10 +51,19 @@ module.exports = ->
 
     # Coding standards
     coffeelint:
-      components: ['Gruntfile.coffee', 'lib/*.coffee']
+      components: ['lib/*.coffee']
       options:
         'max_line_length':
           'level': 'ignore'
+    
+    browserify: 
+      dist:
+        files: 
+          'browser/gom.js': ['./browser/lib/GOM.js']
+        options:
+          browserifyOptions:
+            standalone:'GOM'
+        
 
   # Grunt plugins used for building
   @loadNpmTasks 'grunt-contrib-coffee'
@@ -64,12 +75,14 @@ module.exports = ->
   @loadNpmTasks 'grunt-cafe-mocha'
   @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-coffeelint'
+  
+  @loadNpmTasks('grunt-browserify');
 
   # Our local tasks
   @registerTask 'build', 'Build NoFlo for the chosen target platform', (target = 'all') =>
     @task.run 'coffee'
     if target is 'all' or target is 'browser'
-      @task.run 'noflo_browser'
+      @task.run 'browserify'
       @task.run 'uglify'
 
   @registerTask 'test', 'Build NoFlo and run automated tests', (target = 'all') =>
@@ -78,7 +91,7 @@ module.exports = ->
     if target is 'all' or target is 'nodejs'
       @task.run 'cafemocha'
     if target is 'all' or target is 'browser'
-      @task.run 'noflo_browser'
+      @task.run 'browserify'
       @task.run 'mocha_phantomjs'
 
   @registerTask 'default', ['test']

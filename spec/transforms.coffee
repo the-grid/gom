@@ -1,9 +1,6 @@
 minify = require('html-minifier').minify unless minify
 chai = require 'chai' unless chai
-try
-  GOM = require '../index'
-catch e
-  GOM = require 'gom'
+GOM = require '../index' unless GOM
 
 {expect,assert} = chai
 
