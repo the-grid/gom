@@ -92,20 +92,6 @@ describe "GOM", ->
           </section>
         """
 
-    it 'child by append', ->
-      node = $ 'div',
-        id: 'mommy'
-        class:['parent thing']
-      $.append node, $ 'div',
-        id: 'baby'
-        class:['child thing']
-      expectHTML node,
-        """
-          <div id="mommy" class="parent thing">
-            <div id="baby" class="child thing"></div>
-          </div>
-        """
-
     it 'mixed children', ->
       node = $ "a", {href:'google.com'}, ["this is ",$("span",{},"awesome"),"... for reals!"]
       expectHTML node,

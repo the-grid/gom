@@ -1,13 +1,40 @@
 module.exports = ($) ->
   
   $.append = (parent,child) ->
-    parent.children = [] if !parent.children?
+    parent.children = [] unless parent.children?
     parent.children.push child
 
   $.prepend = (parent,child) ->
-    parent.children = [] if !parent.children?
+    parent.children = [] unless parent.children?
     parent.children.splice 0, 0, child
-
+  
+  $.addClass = (node,names) ->
+    node.attributes = {} unless node.attributes?
+    node.attributes.class = [] unless node.attributes.class?
+    return _addClass(node,names) unless names instanceof Array
+    for name in names
+      _addClass(node,name)
+    node
+  
+  _addClass = (node,name) ->
+    classes = node.attributes.class
+    classes.push(name) if classes.indexOf(name) is -1
+    classes
+    
+  $.removeClass = (node,names) ->
+    return node unless node.attributes?
+    return node unless node.attributes.class?
+    return _addClass(node,names) unless names instanceof Array
+    for name in names
+      _removeClass(node,name)
+    node
+  
+  _removeClass = (node, name) ->
+    classes = node.attributes.class
+    i = classes.indexOf(name)
+    classes.splice(i,1) if i isnt -1
+    classes
+  
   $.mergeattributes = (attributes1={},attributes2={}) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
