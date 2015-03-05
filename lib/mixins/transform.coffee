@@ -1,8 +1,8 @@
-module.exports = ($) -> 
-  
-  $.transform = transform = (nodes, transformations) ->
-    throw new Error "GOM Transformations must be an Array" unless transformations instanceof Array
-    return _transform nodes, transformations
+module.exports = ($) ->
+
+  $.transform = transform = (nodes, transforms) ->
+    transforms = [transforms] unless transforms instanceof Array
+    return _transform nodes, transforms
 
   _transform = (nodes, transformations) ->
     # return if falsy child
@@ -40,5 +40,5 @@ module.exports = ($) ->
           node = callback.call($,node) if node.tag is selector
 
     node
-  
+
   $
