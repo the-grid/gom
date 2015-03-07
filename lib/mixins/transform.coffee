@@ -4,33 +4,33 @@ module.exports = ($) ->
     transforms = [transforms] unless transforms instanceof Array
     return _transform nodes, transforms
 
-  _transform = (nodes, transformations) ->
+  _transform = (nodes, transforms) ->
     # return if falsy child
     return nodes unless nodes?
 
-    return _transformNodes(nodes, transformations) if nodes instanceof Array
+    return _transformNodes(nodes, transforms) if nodes instanceof Array
 
     # if child is function, evaluate it
-    return _transform(node(), transformations) if typeof node is 'function'
+    return _transform(node(), transforms) if typeof node is 'function'
 
-    return _transformNode nodes, transformations
+    return _transformNode nodes, transforms
 
-  _transformNodes = (nodes, transformations) ->
+  _transformNodes = (nodes, transforms) ->
     newNodes = []
     for node in nodes
-      newNode = _transform node, transformations
+      newNode = _transform node, transforms
       # removes falsy children
       newNodes.push(newNode) if newNode
     newNodes
 
-  _transformNode = (node, transformations) ->
+  _transformNode = (node, transforms) ->
 
     # recurse children first
-    # otherwise wrapping transformations = infinite loop
+    # otherwise wrapping transforms = infinite loop
     if node.children?
-      node.children = transform node.children, transformations
+      node.children = transform node.children, transforms
 
-    for t in transformations
+    for t in transforms
 
       if typeof t is 'function'
         node = t.call $, node
