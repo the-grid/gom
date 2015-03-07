@@ -24,6 +24,16 @@ toHTML = (name,gom,html) ->
 
 describe "Transforms", ->
 
+  describe 'basics', ->
+
+    it 'transforms', ->
+      node = $.transform $('post',{class:['featured']}),
+        'post': (node) ->
+          node.tag = 'article'
+          node
+      expectHTML node, """<article class="featured"></article>"""
+
+
   describe 'wrapping', ->
 
     $ = GOM()
