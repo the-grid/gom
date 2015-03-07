@@ -15,7 +15,6 @@ toHTML = (name,gom,html) ->
     expectHTML gom, html
 
 
-
 #  _____                     __
 # |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___   ___
 #   | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \ / __|
@@ -26,12 +25,47 @@ describe "Transforms", ->
 
   describe 'basics', ->
 
-    it 'transforms', ->
-      node = $.transform $('post',{class:['featured']}),
+    $ = GOM()
+
+    getNode = ->
+      $('post',{class:['featured']})
+
+    it 'by matching selector key', ->
+      node = $.transform getNode(),
         'post': (node) ->
           node.tag = 'article'
           node
       expectHTML node, """<article class="featured"></article>"""
+
+    it 'not by mismatching selector key', ->
+      node = $.transform getNode(),
+        'postttt': (node) ->
+          node.tag = 'article'
+          node
+      expectHTML node, """<post class="featured"></post>"""
+
+    it 'by callback', ->
+      node = $.transform getNode(), (node) ->
+        node.tag = 'section'
+        node
+      expectHTML node, """<section class="featured"></section>"""
+
+    it 'by matching selector key w/ args', ->
+      transform =
+        'post': (node, clazz) ->
+          node.tag = 'article'
+          $.addClass node, clazz
+          node
+      node = $.transform getNode(), transform, 'selected'
+      expectHTML node, """<article class="featured selected"></article>"""
+
+    it 'by callback key w/ args', ->
+      transform = (node, clazz1, clazz2) ->
+        node.tag = 'section'
+        $.addClass node, [clazz1, clazz2]
+        node
+      node = $.transform getNode(), transform, 'foo', 'bar'
+      expectHTML node, """<section class="featured foo bar"></section>"""
 
 
   describe 'wrapping', ->
