@@ -13,14 +13,14 @@ expectHTML = (gom,html) ->
 toHTML = (name,gom,html) ->
   it name, ->
     expectHTML gom, html
-                                              
 
 
-#  _____                     __                                    
-# |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___   ___ 
+
+#  _____                     __
+# |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___   ___
 #   | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \ / __|
 #   | || | | (_| | | | \__ \  _| (_) | |  | | | | | |\__ \
-#   |_||_|  \__,_|_| |_|___/_|  \___/|_|  |_| |_| |_||___/                           
+#   |_||_|  \__,_|_| |_|___/_|  \___/|_|  |_| |_| |_||___/
 
 describe "Transforms", ->
 
@@ -52,7 +52,7 @@ describe "Transforms", ->
     it 'wrap link tags / renders html', ->
       tree = $.transform tree, [
         "a": (node) ->
-          return $ 'span', {class:['wrap']}, [node]
+          return @ 'span', {class:['wrap']}, [node]
       ]
       expectHTML tree,
         """
@@ -99,9 +99,9 @@ describe "Transforms", ->
       tree = $.transform tree, [
         (node) ->
           return node unless node.tag is 'article'
-          return $.transform node, [
+          return @transform node, [
             "a": (node) ->
-              return $ 'span', {class:['wrap']}, [node]
+              return @ 'span', {class:['wrap']}, [node]
           ]
       ]
       expectHTML tree,

@@ -16,7 +16,7 @@ toHTML = (name,gom,html) ->
 
 
 $ = GOM()
-                             
+
 describe "Helpers", ->
 
   it 'append()', ->
@@ -36,7 +36,7 @@ describe "Helpers", ->
           <div id="baby2" class="child thing"></div>
         </div>
       """
-  
+
   it 'prepend()', ->
     node = $ 'div',
       id: 'mommy'
@@ -54,7 +54,7 @@ describe "Helpers", ->
           <div id="baby1" class="child thing"></div>
         </div>
       """
-  
+
   it 'addClass()', ->
     node = $ 'div'
     $.addClass node, 'foo'
@@ -65,7 +65,7 @@ describe "Helpers", ->
       """
         <div class="foo bar boom bang"></div>
       """
-  
+
   it 'removeClass()', ->
     node = $ 'div'
     $.addClass node, 'foo'
@@ -77,3 +77,12 @@ describe "Helpers", ->
       """
         <div class="boom"></div>
       """
+
+  it 'hasClass()', ->
+    node = $ 'div'
+    chai.expect($.hasClass(node,'foo')).to.be.false
+    $.addClass node, 'foo'
+    chai.expect($.hasClass(node,'foo')).to.be.true
+    $.addClass node, 'bar'
+    chai.expect($.hasClass(node,['foo','bar'])).to.be.true
+    chai.expect($.hasClass(node,['foo','bang','bar'])).to.be.false

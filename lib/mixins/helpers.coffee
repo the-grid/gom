@@ -1,5 +1,5 @@
 module.exports = ($) ->
-  
+
   $.append = (parent,child) ->
     parent.children = [] unless parent.children?
     parent.children.push child
@@ -7,7 +7,7 @@ module.exports = ($) ->
   $.prepend = (parent,child) ->
     parent.children = [] unless parent.children?
     parent.children.splice 0, 0, child
-  
+
   $.addClass = (node,names) ->
     node.attributes = {} unless node.attributes?
     node.attributes.class = [] unless node.attributes.class?
@@ -15,12 +15,12 @@ module.exports = ($) ->
     for name in names
       _addClass(node,name)
     node
-  
+
   _addClass = (node,name) ->
     classes = node.attributes.class
     classes.push(name) if classes.indexOf(name) is -1
     classes
-    
+
   $.removeClass = (node,names) ->
     return node unless node.attributes?
     return node unless node.attributes.class?
@@ -28,13 +28,25 @@ module.exports = ($) ->
     for name in names
       _removeClass(node,name)
     node
-  
+
   _removeClass = (node, name) ->
     classes = node.attributes.class
     i = classes.indexOf(name)
     classes.splice(i,1) if i isnt -1
     classes
-  
+
+  $.hasClass = (node,names) ->
+    return false unless node.attributes?
+    return false unless node.attributes.class?
+    return _hasClass(node,names) unless names instanceof Array
+    for name in names
+      boolean = _hasClass(node,name)
+      return boolean unless boolean
+    true
+
+  _hasClass = (node,name) ->
+    return node.attributes.class.indexOf(name) isnt -1
+
   $.mergeattributes = (attributes1={},attributes2={}) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
@@ -65,5 +77,5 @@ module.exports = ($) ->
     if !(children2 instanceof Array)
       children2 = [children2]
     return children1.concat children2
-    
+
   $
