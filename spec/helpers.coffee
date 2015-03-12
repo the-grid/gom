@@ -19,6 +19,24 @@ $ = GOM()
 
 describe "Helpers", ->
 
+  describe 'isNode()', ->
+    it "with explicit node", ->
+      chai.assert $.isNode $ 'div'
+      
+    it "with implicit node", ->
+      chai.assert $.isNode {}
+      chai.assert $.isNode {attributes:{},children:{}}
+    
+    it "with string", ->
+      chai.assert !$.isNode("hello")
+    
+    it "with array", ->
+      chai.assert !$.isNode([])
+    
+    it "with function", ->
+      x = () ->
+      chai.assert !$.isNode(x)
+  
   it 'append()', ->
     node = $ 'div',
       id: 'mommy'

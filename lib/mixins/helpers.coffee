@@ -4,14 +4,16 @@ module.exports = ($) ->
     return node? and (typeof node is 'object') and !(node instanceof Array)
   
   $.append = (parent,child) ->
+    return parent unless isNode parent
     parent.children = [] unless parent.children?
     parent.children.push child
 
   $.prepend = (parent,child) ->
+    return parent unless isNode parent
     parent.children = [] unless parent.children?
     parent.children.splice 0, 0, child
 
-  $.addClass = (node,names) ->
+  $.addClass = (node,names) ->    
     node.attributes = {} unless node.attributes?
     node.attributes.class = [] unless node.attributes.class?
     return _addClass(node,names) unless names instanceof Array
@@ -20,6 +22,7 @@ module.exports = ($) ->
     node
 
   _addClass = (node,name) ->
+    return node unless isNode node
     classes = node.attributes.class
     classes.push(name) if classes.indexOf(name) is -1
     classes
@@ -33,6 +36,7 @@ module.exports = ($) ->
     node
 
   _removeClass = (node, name) ->
+    return node unless isNode node
     classes = node.attributes.class
     i = classes.indexOf(name)
     classes.splice(i,1) if i isnt -1
