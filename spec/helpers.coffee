@@ -86,3 +86,33 @@ describe "Helpers", ->
     $.addClass node, 'bar'
     chai.expect($.hasClass(node,['foo','bar'])).to.be.true
     chai.expect($.hasClass(node,['foo','bang','bar'])).to.be.false
+  
+  describe 'get & set Attribute', ->
+
+    test = (name, node, passThrough = false) ->
+      it name, ->        
+        $.setAttribute node, 'foo', 'bar'
+        chai.expect($.getAttribute(node,'foo')).to.eql 'bar'
+        $.setAttribute node, 'foo', 'bang'
+        chai.expect($.getAttribute(node,'foo')).to.eql 'bang'
+        $.setAttribute node, 'hello', 'world'
+        expectHTML node,
+          """
+            <div foo="bang" hello="world"></div>
+          """
+    
+    passThroughTest = (name, node, result) ->
+      it name, ->        
+        $.setAttribute node, 'foo', 'bar'
+        chai.expect($.getAttribute(node,'foo')).to.not.eql 'bar'
+        $.setAttribute node, 'foo', 'bang'
+        chai.expect($.getAttribute(node,'foo')).to.not.eql 'bar'
+        $.setAttribute node, 'hello', 'world'
+        expectHTML node, result
+    
+    test "with an explicit node", $('div')
+    test "with an implicit node", {tag:'div'}
+    passThroughTest "with a string", "hello", "hello"
+    passThroughTest "with a function", () ->
+        "hello"
+      , "hello"

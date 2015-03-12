@@ -1,5 +1,8 @@
 module.exports = ($) ->
-
+  
+  isNode = $.isNode = (node) ->
+    return node? and (typeof node is 'object') and !(node instanceof Array)
+  
   $.append = (parent,child) ->
     parent.children = [] unless parent.children?
     parent.children.push child
@@ -46,6 +49,15 @@ module.exports = ($) ->
 
   _hasClass = (node,name) ->
     return node.attributes.class.indexOf(name) isnt -1
+  
+  $.setAttribute = (node,key,val) ->
+    return node unless isNode(node)
+    node.attributes = {} unless node.attributes?
+    node.attributes[key] = val
+    return node
+  
+  $.getAttribute = (node,key) ->
+    node?.attributes?[key] 
 
   $.mergeattributes = (attributes1={},attributes2={}) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
