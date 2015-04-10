@@ -227,3 +227,24 @@ describe "Transforms", ->
     #it 'fails with missing data', ->
     #
     #  expect(-> $('post', {data:{}})).to.throw Error
+
+
+  describe "returning a new node that references node children", ->
+
+    it "should use the correct children", ->
+      $ = GOM()
+
+      tree =
+        tag: "custom"
+        children: [
+          "<p>Some text</p>"
+        ]
+
+      result = $.transform tree, (node) ->
+        $ "div", null, node.children
+
+      expect(result).to.deep.equal
+        tag: "div"
+        children: [
+          "<p>Some text</p>"
+        ]
