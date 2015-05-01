@@ -58,8 +58,9 @@ module.exports = ($) ->
       else
         val = String(val) if typeof val is 'number'
       if val?.length > 0
+        continue unless key in ['class','style'] or typeof val is 'string'
         attributes += " " + key + '="'
-        if val instanceof Array
+        if key is 'class' and val instanceof Array
           attributes += val.join(" ")
         else
           attributes += val

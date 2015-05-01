@@ -220,3 +220,14 @@ describe "GOM", ->
         """
           <div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>
         """
+    
+    
+    it 'object & array attributes are ignored', ->
+      build = ->
+        [
+          $ "div", {class:['obj-attrs'], $class:['ignore','me'], gss:{align:'right'}, item:{id:100}}
+        ]
+      expectHTML build(),
+        """
+          <div class="obj-attrs"></div>
+        """
