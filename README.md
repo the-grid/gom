@@ -11,3 +11,6 @@ WIP
 
 When rendering, attributes other than `style` and `class` are ignored unless typeof is string or number.
 
+# TODO
+
+- mergeattributes options {keys:class:{concat:true,recursive:false}} ...
