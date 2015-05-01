@@ -1,3 +1,5 @@
+clone = require 'clone'
+
 module.exports = ($) ->
   
   isNode = $.isNode = (node) ->
@@ -78,7 +80,7 @@ module.exports = ($) ->
         else if (typeof v1 is 'object') and (typeof v2 is 'object')
           # TODO: not clone
           # clone to not disrupt $h!t up the closures
-          v2 = JSON.parse JSON.stringify v2
+          v2 = clone v2, true
           # prefer styles from attributes1
           for innerKey, innerVal of v1
             v2[innerKey] = innerVal

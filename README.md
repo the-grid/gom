@@ -3,7 +3,11 @@
 Grid Object Model
 
 
+# Docs
+
+WIP
 
 ## Attributes
 
 When rendering, attributes other than `style` and `class` are ignored unless typeof is string or number.
+

@@ -1,7 +1,7 @@
 {
   "name": "gom",
   "description": "Grid Object Model",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "author": {
     "name": "Dan Tocchini",
     "email": "d4@thegrid.io"
@@ -17,7 +17,8 @@
     }
   ],
   "dependencies": {
-    "coffee-script": "^1.8.0"
+    "coffee-script": "^1.8.0",
+    "clone": "^1.0.1"
   },
   "devDependencies": {
     "chai": "~1.9.0",
