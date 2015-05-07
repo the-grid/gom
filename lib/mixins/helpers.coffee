@@ -1,10 +1,10 @@
 clone = require 'clone'
 
 module.exports = ($) ->
-  
+
   isNode = $.isNode = (node) ->
     return node? and (typeof node is 'object') and !(node instanceof Array)
-  
+
   $.append = (parent,child) ->
     return parent unless isNode parent
     parent.children = [] unless parent.children?
@@ -15,7 +15,7 @@ module.exports = ($) ->
     parent.children = [] unless parent.children?
     parent.children.splice 0, 0, child
 
-  $.addClass = (node,names) ->    
+  $.addClass = (node,names) ->
     node.attributes = {} unless node.attributes?
     node.attributes.class = [] unless node.attributes.class?
     return _addClass(node,names) unless names instanceof Array
@@ -55,15 +55,15 @@ module.exports = ($) ->
 
   _hasClass = (node,name) ->
     return node.attributes.class.indexOf(name) isnt -1
-  
+
   $.setAttribute = (node,key,val) ->
     return node unless isNode(node)
     node.attributes = {} unless node.attributes?
     node.attributes[key] = val
     return node
-  
+
   $.getAttribute = (node,key) ->
-    node?.attributes?[key] 
+    node?.attributes?[key]
 
   $.mergeattributes = (attributes1={},attributes2={}) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
@@ -76,7 +76,10 @@ module.exports = ($) ->
         if (v1 instanceof Array) and (v2 instanceof Array)
           attributes[key] = v1.concat v2
         else if (typeof v1 is 'string') and (typeof v2 is 'string')
-          attributes[key] += v1 + " " + v2
+          if v1 isnt v2
+            attributes[key] += v1 + " " + v2
+          else
+            attributes[key] = v1
         else if (typeof v1 is 'object') and (typeof v2 is 'object')
           # TODO: not clone
           # clone to not disrupt $h!t up the closures
