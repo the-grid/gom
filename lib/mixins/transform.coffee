@@ -25,19 +25,24 @@ module.exports = ($) ->
 
   _transformNode = (node, transforms, args) ->
 
+    # Pass transforms & parent element to callback
+    args = args?.slice() || [args]
+    args.push(null) unless args.length
+    args.unshift node
+    args.push(transforms)
     # recurse children first
     # otherwise wrapping transforms = infinite loop
     if node.children?
-      node.children = transform node.children, transforms
+      node.children = transform node.children, transforms, node
 
     for t in transforms
 
       if typeof t is 'function'
-        node = t.call $, node, args...
+        node = t.apply $, args
 
       else if typeof t is 'object'
         for selector, callback of t
-          node = callback.call($,node,args...) if node.tag is selector
+          node = callback.apply $, args if node.tag is selector
 
     node
 

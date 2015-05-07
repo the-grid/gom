@@ -229,7 +229,7 @@ describe "Transforms", ->
     #  expect(-> $('post', {data:{}})).to.throw Error
 
 
-  describe "returning a new node that references node children", ->
+  describe "Strings are treated as nodes", ->
 
     it "should use the correct children", ->
       $ = GOM()
@@ -241,10 +241,48 @@ describe "Transforms", ->
         ]
 
       result = $.transform tree, (node) ->
-        $ "div", null, node.children
+        $ "IGNORE", null, node.children
 
       expect(result).to.deep.equal
-        tag: "div"
+        tag: "IGNORE"
         children: [
-          "<p>Some text</p>"
+          tag: "IGNORE"
         ]
+
+  describe "Transform parent in callback parans", ->
+
+    it "should use the correct children", ->
+      $ = GOM()
+
+
+      tree = $ 'section', {id:'section-1'}, [
+
+        $ 'article', {id:'article-1'}, [
+          $ 'h1', null, "title 1"
+        ]
+
+        $ 'article', {id:'article-2'}, [
+          $ 'h1', null, "title 2"
+        ]
+
+      ]
+
+      transforms = (node,parent) ->
+        parentId = @getAttribute parent, 'id'
+        @setAttribute node, 'parent-id', parentId if parentId?
+        node
+
+      result = $.transform tree, transforms
+
+      expectHTML result, """
+
+        <section id="section-1">
+          <article id="article-1", parent-id="section-1">
+            <h1 parent-id="article-1">title 1</h1>
+          </article>
+          <article id="article-2", parent-id="section-1">
+            <h1 parent-id="article-2">title 2</h1>
+          </article>
+        </section>
+
+      """
