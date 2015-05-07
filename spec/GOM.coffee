@@ -15,18 +15,18 @@ toHTML = (name,gom,html) ->
     expectHTML gom, html
 
 
-#          _              _            _   _       
-#         /\ \           /\ \         /\_\/\_\ _   
-#        /  \ \         /  \ \       / / / / //\_\ 
-#       / /\ \_\       / /\ \ \     /\ \/ \ \/ / / 
-#      / / /\/_/      / / /\ \ \   /  \____\__/ /  
-#     / / / ______   / / /  \ \_\ / /\/________/   
-#    / / / /\_____\ / / /   / / // / /\/_// / /    
-#   / / /  \/____ // / /   / / // / /    / / /     
-#  / / /_____/ / // / /___/ / // / /    / / /      
-# / / /______\/ // / /____\/ / \/_/    / / /       
-# \/___________/ \/_________/          \/_/        
-                                                 
+#          _              _            _   _
+#         /\ \           /\ \         /\_\/\_\ _
+#        /  \ \         /  \ \       / / / / //\_\
+#       / /\ \_\       / /\ \ \     /\ \/ \ \/ / /
+#      / / /\/_/      / / /\ \ \   /  \____\__/ /
+#     / / / ______   / / /  \ \_\ / /\/________/
+#    / / / /\_____\ / / /   / / // / /\/_// / /
+#   / / /  \/____ // / /   / / // / /    / / /
+#  / / /_____/ / // / /___/ / // / /    / / /
+# / / /______\/ // / /____\/ / \/_/    / / /
+# \/___________/ \/_________/          \/_/
+
 describe "GOM", ->
 
   describe "basics", ->
@@ -55,6 +55,15 @@ describe "GOM", ->
         'data-foo':'bar'
       """
         <div class="hello" data-foo="bar"></div>
+      """
+
+    toHTML 'undefined & null attribute',
+      $ 'div',
+        class:undefined
+        'data-foo':null
+        exists:'yes'
+      """
+        <div exists="yes"></div>
       """
 
     it 'child by attributes.children', ->
@@ -220,8 +229,8 @@ describe "GOM", ->
         """
           <div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>
         """
-    
-    
+
+
     it 'object & array attributes are ignored', ->
       build = ->
         [
