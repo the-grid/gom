@@ -22,21 +22,21 @@ describe "Helpers", ->
   describe 'isNode()', ->
     it "with explicit node", ->
       chai.assert $.isNode $ 'div'
-      
+
     it "with implicit node", ->
       chai.assert $.isNode {}
       chai.assert $.isNode {attributes:{},children:{}}
-    
+
     it "with string", ->
       chai.assert !$.isNode("hello")
-    
+
     it "with array", ->
       chai.assert !$.isNode([])
-    
+
     it "with function", ->
       x = () ->
       chai.assert !$.isNode(x)
-  
+
   it 'append()', ->
     node = $ 'div',
       id: 'mommy'
@@ -104,11 +104,26 @@ describe "Helpers", ->
     $.addClass node, 'bar'
     chai.expect($.hasClass(node,['foo','bar'])).to.be.true
     chai.expect($.hasClass(node,['foo','bang','bar'])).to.be.false
-  
+
+  it 'mergeAttributes() without exclusion', ->
+    attrs = {class: ['hello'] }
+    attrs1 = {class: ['world'], index: 'super', data: {block: {title: 'sometitle'}} }
+
+    mergedAttrs = $.mergeAttributes attrs, attrs1
+    expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super', data: {block: {title: 'sometitle'}} }
+
+  it 'mergeAttributes() with exclusion', ->
+    attrs = {class: ['hello'] }
+    attrs1 = {class: ['world'], index: 'super', data: {block: {title: 'sometitle'}} }
+
+    mergedAttrs = $.mergeAttributes attrs, attrs1, ['data']
+    expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super' }
+
+
   describe 'get & set Attribute', ->
 
     test = (name, node, passThrough = false) ->
-      it name, ->        
+      it name, ->
         $.setAttribute node, 'foo', 'bar'
         chai.expect($.getAttribute(node,'foo')).to.eql 'bar'
         $.setAttribute node, 'foo', 'bang'
@@ -118,16 +133,16 @@ describe "Helpers", ->
           """
             <div foo="bang" hello="world"></div>
           """
-    
+
     passThroughTest = (name, node, result) ->
-      it name, ->        
+      it name, ->
         $.setAttribute node, 'foo', 'bar'
         chai.expect($.getAttribute(node,'foo')).to.not.eql 'bar'
         $.setAttribute node, 'foo', 'bang'
         chai.expect($.getAttribute(node,'foo')).to.not.eql 'bar'
         $.setAttribute node, 'hello', 'world'
         expectHTML node, result
-    
+
     test "with an explicit node", $('div')
     test "with an implicit node", {tag:'div'}
     passThroughTest "with a string", "hello", "hello"

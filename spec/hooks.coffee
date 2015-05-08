@@ -15,13 +15,13 @@ toHTML = (name,gom,html) ->
     expectHTML gom, html
 
 
-#  _   _             _        
-# | | | | ___   ___ | | _____ 
+#  _   _             _
+# | | | | ___   ___ | | _____
 # | |_| |/ _ \ / _ \| |/ / __|
 # |  _  | (_) | (_) |   <\__ \
 # |_| |_|\___/ \___/|_|\_\___/
 #
-                             
+
 describe "hooks", ->
 
   describe 'basics', ->
@@ -52,15 +52,15 @@ describe "hooks", ->
     $ = GOM(
 
       "cta": (attributes={}, children) ->
-        attributes = @mergeattributes(attributes,{class:['cta']})
+        attributes = @mergeAttributes(attributes,{class:['cta']})
         return @ 'button', attributes, children
 
       "post": (attributes={}, children) ->
         {title,subtitle} = attributes.data
 
-        defaultPostattributes = { class:['post'], style:{'color':'red',opacity:0} }
+        defaultPostattributes = { class:['post'], style:{'color':'red',opacity:0}, index: 'cover' }
 
-        attributes = @mergeattributes(attributes, defaultPostattributes)
+        attributes = @mergeAttributes(attributes, defaultPostattributes)
 
         postChildren = [
           @ "h1", {}, title
@@ -79,7 +79,7 @@ describe "hooks", ->
           ]
       expectHTML build(),
         """
-          <article class="featured post" style="color:red; opacity:1;">
+          <article class="featured post" style="color:red; opacity:1;" index="cover">
             <h1>Tis a post!</h1>
             <h2>indeed it is</h2>
             <button class="active cta">Buy Now</button>
@@ -95,16 +95,37 @@ describe "hooks", ->
           ]
       expectHTML build(),
         """
-          <article class="featured post" style="color:red; opacity:0;">
+          <article class="featured post" style="color:red; opacity:0;" index="cover">
             <h1>Tis a post!</h1>
             <h2>indeed it is</h2>
             <button class="active cta">Buy Now</button>
-            <article style="color:blue; opacity:0;" class="post">
+            <article style="color:blue; opacity:0;" class="post" index="cover">
               <h1>Tis an inner post!</h1>
               <h2>indeed it is</h2>
             </article>
           </article>
         """
+
+    it 'with attributes duplication in merge', ->
+      build = ->
+        $ 'post', {class:['featured'], data:{title:'Tis a post!',subtitle:'indeed it is'}, index: "cover"},
+          [
+            $ 'cta', {class:['active']}, 'Buy Now'
+            $ 'post', {data:{title:'Tis an inner post!',subtitle:'indeed it is'}, style:{"color":"blue"}}
+          ]
+      expectHTML build(),
+        """
+          <article class="featured post" index="cover" style="color:red; opacity:0;">
+            <h1>Tis a post!</h1>
+            <h2>indeed it is</h2>
+            <button class="active cta">Buy Now</button>
+            <article style="color:blue; opacity:0;" class="post" index="cover">
+              <h1>Tis an inner post!</h1>
+              <h2>indeed it is</h2>
+            </article>
+          </article>
+        """
+
   describe 'hooks > includes & extends w/ blocks', ->
 
     $ = GOM(
