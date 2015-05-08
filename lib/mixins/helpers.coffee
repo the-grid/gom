@@ -65,11 +65,11 @@ module.exports = ($) ->
   $.getAttribute = (node,key) ->
     node?.attributes?[key]
 
-  $.mergeattributes = (attributes1={},attributes2={}) ->
+  $.mergeattributes = (attributes1={},attributes2={},exclusions=[]) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
     for key, val of attributes1
-      attributes[key] = val
+      attributes[key] = val unless key in exclusions
     for key, v2 of attributes2
       v1 = attributes[key]
       if v1
@@ -89,7 +89,7 @@ module.exports = ($) ->
             v2[innerKey] = innerVal
           attributes[key] = v2
       else
-        attributes[key] = v2
+        attributes[key] = v2 unless key in exclusions
     return attributes
 
   $.mergeChildren = (children1=[],children2=[]) ->
