@@ -105,18 +105,18 @@ describe "Helpers", ->
     chai.expect($.hasClass(node,['foo','bar'])).to.be.true
     chai.expect($.hasClass(node,['foo','bang','bar'])).to.be.false
 
-  it 'mergeattributes() without exclusion', ->
+  it 'mergeAttributes() without exclusion', ->
     attrs = {class: ['hello'] }
     attrs1 = {class: ['world'], index: 'super', data: {block: {title: 'sometitle'}} }
 
-    mergedAttrs = $.mergeattributes attrs, attrs1
+    mergedAttrs = $.mergeAttributes attrs, attrs1
     expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super', data: {block: {title: 'sometitle'}} }
 
-  it 'mergeattributes() with exclusion', ->
+  it 'mergeAttributes() with exclusion', ->
     attrs = {class: ['hello'] }
     attrs1 = {class: ['world'], index: 'super', data: {block: {title: 'sometitle'}} }
 
-    mergedAttrs = $.mergeattributes attrs, attrs1, ['data']
+    mergedAttrs = $.mergeAttributes attrs, attrs1, ['data']
     expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super' }
 
 
