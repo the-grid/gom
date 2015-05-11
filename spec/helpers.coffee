@@ -119,6 +119,20 @@ describe "Helpers", ->
     mergedAttrs = $.mergeAttributes attrs, attrs1, ['data']
     expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super' }
 
+  it 'merge with concat string', ->
+    attrs = {str: 'first' }
+    attrs1 = {str: 'second' }
+
+    mergedAttrs = $.mergeAttributes attrs, attrs1, [], true
+    expect(mergedAttrs).to.deep.equal {str: 'first second' }
+
+  it 'merge without concat string', ->
+    attrs = {str: 'first' }
+    attrs1 = {str: 'second' }
+
+    mergedAttrs = $.mergeAttributes attrs, attrs1, [], false
+    expect(mergedAttrs).to.deep.equal {str: 'first' }
+
 
   describe 'get & set Attribute', ->
 
