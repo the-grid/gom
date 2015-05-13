@@ -65,7 +65,7 @@ module.exports = ($) ->
   $.getAttribute = (node,key) ->
     node?.attributes?[key]
 
-  $.mergeAttributes = (attributes1={},attributes2={},exclusions=[],concatString=false) ->
+  $.mergeattributes = (attributes1={},attributes2={},exclusions=[],concatString=false) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
     for key, val of attributes1

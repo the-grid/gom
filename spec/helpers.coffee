@@ -105,32 +105,32 @@ describe "Helpers", ->
     chai.expect($.hasClass(node,['foo','bar'])).to.be.true
     chai.expect($.hasClass(node,['foo','bang','bar'])).to.be.false
 
-  it 'mergeAttributes() without exclusion', ->
+  it 'mergeattributes() without exclusion', ->
     attrs = {class: ['hello'] }
     attrs1 = {class: ['world'], index: 'super', data: {block: {title: 'sometitle'}} }
 
-    mergedAttrs = $.mergeAttributes attrs, attrs1
+    mergedAttrs = $.mergeattributes attrs, attrs1
     expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super', data: {block: {title: 'sometitle'}} }
 
-  it 'mergeAttributes() with exclusion', ->
+  it 'mergeattributes() with exclusion', ->
     attrs = {class: ['hello'] }
     attrs1 = {class: ['world'], index: 'super', data: {block: {title: 'sometitle'}} }
 
-    mergedAttrs = $.mergeAttributes attrs, attrs1, ['data']
+    mergedAttrs = $.mergeattributes attrs, attrs1, ['data']
     expect(mergedAttrs).to.deep.equal {class: ['hello', 'world'], index: 'super' }
 
   it 'merge with concat string', ->
     attrs = {str: 'first' }
     attrs1 = {str: 'second' }
 
-    mergedAttrs = $.mergeAttributes attrs, attrs1, [], true
+    mergedAttrs = $.mergeattributes attrs, attrs1, [], true
     expect(mergedAttrs).to.deep.equal {str: 'first second' }
 
   it 'merge without concat string', ->
     attrs = {str: 'first' }
     attrs1 = {str: 'second' }
 
-    mergedAttrs = $.mergeAttributes attrs, attrs1, [], false
+    mergedAttrs = $.mergeattributes attrs, attrs1, [], false
     expect(mergedAttrs).to.deep.equal {str: 'first' }
 
 

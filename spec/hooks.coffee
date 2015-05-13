@@ -52,7 +52,7 @@ describe "hooks", ->
     $ = GOM(
 
       "cta": (attributes={}, children) ->
-        attributes = @mergeAttributes(attributes,{class:['cta']})
+        attributes = @mergeattributes(attributes,{class:['cta']})
         return @ 'button', attributes, children
 
       "post": (attributes={}, children) ->
@@ -60,7 +60,7 @@ describe "hooks", ->
 
         defaultPostattributes = { class:['post'], style:{'color':'red',opacity:0}, index: 'cover' }
 
-        attributes = @mergeAttributes(attributes, defaultPostattributes)
+        attributes = @mergeattributes(attributes, defaultPostattributes)
 
         postChildren = [
           @ "h1", {}, title
