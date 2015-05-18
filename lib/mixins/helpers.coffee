@@ -65,7 +65,7 @@ module.exports = ($) ->
   $.getAttribute = (node,key) ->
     node?.attributes?[key]
 
-  $.mergeAttributes = (attributes1={},attributes2={},exclusions=[]) ->
+  $.mergeAttributes = (attributes1={},attributes2={},exclusions=[],concatString=false) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
     for key, val of attributes1
@@ -76,10 +76,8 @@ module.exports = ($) ->
         if (v1 instanceof Array) and (v2 instanceof Array)
           attributes[key] = v1.concat v2
         else if (typeof v1 is 'string') and (typeof v2 is 'string')
-          if v1 isnt v2
-            attributes[key] += v1 + " " + v2
-          else
-            attributes[key] = v1
+          if v1 isnt v2 and concatString
+            attributes[key] += " " + v2
         else if (typeof v1 is 'object') and (typeof v2 is 'object')
           # TODO: not clone
           # clone to not disrupt $h!t up the closures
