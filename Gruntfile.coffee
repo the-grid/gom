@@ -5,14 +5,6 @@ module.exports = ->
 
     # CoffeeScript compilation of tests
     coffee:
-      lib:
-        options:
-          bare: true
-        expand: true
-        cwd: './'
-        src: ['./lib/**/*.coffee']
-        dest: 'browser'
-        ext: '.js'
       spec:
         options:
           bare: true
@@ -55,15 +47,16 @@ module.exports = ->
       options:
         'max_line_length':
           'level': 'ignore'
-    
-    browserify: 
+
+    browserify:
       dist:
-        files: 
-          'browser/gom.js': ['./browser/lib/GOM.js']
+        files:
+          'browser/gom.js': ['./lib/GOM.coffee']
         options:
           browserifyOptions:
+            extensions: ['.coffee']
             standalone:'GOM'
-        
+
 
   # Grunt plugins used for building
   @loadNpmTasks 'grunt-contrib-coffee'
@@ -75,7 +68,7 @@ module.exports = ->
   @loadNpmTasks 'grunt-cafe-mocha'
   @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-coffeelint'
-  
+
   @loadNpmTasks('grunt-browserify');
 
   # Our local tasks
