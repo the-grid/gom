@@ -187,7 +187,7 @@ describe("Helpers", function() {
       str: 'first'
     });
   });
-  return describe('get & set Attribute', function() {
+  describe('get & set Attribute', function() {
     var passThroughTest, test;
     test = function(name, node, passThrough) {
       if (passThrough == null) {
@@ -220,5 +220,25 @@ describe("Helpers", function() {
     return passThroughTest("with a function", function() {
       return "hello";
     }, "hello");
+  });
+  return describe('getChildren', function() {
+    var imgNode, node;
+    imgNode = $('img', {});
+    node = $('div', {}, [$('section', {}, [imgNode]), $('article', {}, [$('p', {}, "hello")])]);
+    it('getChild', function() {
+      var foundNode;
+      foundNode = $.getChildren(node, ['img']);
+      return expect(foundNode).to.equal(imgNode);
+    });
+    it('with two search', function() {
+      var foundNode;
+      foundNode = $.getChildren(node, ['cover', 'img']);
+      return expect(foundNode).to.equal(imgNode);
+    });
+    return it('with two present search', function() {
+      var foundNode;
+      foundNode = $.getChildren(node, ['img', 'p']);
+      return expect(foundNode).to.equal(imgNode);
+    });
   });
 });

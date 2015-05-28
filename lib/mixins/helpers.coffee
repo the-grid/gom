@@ -56,6 +56,18 @@ module.exports = ($) ->
   _hasClass = (node,name) ->
     return node.attributes.class.indexOf(name) isnt -1
 
+  $.getChildren = (node, childTagNames) ->
+    if node.children instanceof Array
+      for tagName in childTagNames
+        for child in node.children
+          return child if child.tag is tagName
+
+      for child in node.children
+        foundChild = $.getChildren(child, childTagNames)
+        return foundChild if foundChild
+
+    return null
+
   $.setAttribute = (node,key,val) ->
     return node unless isNode(node)
     node.attributes = {} unless node.attributes?

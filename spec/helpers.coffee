@@ -163,3 +163,27 @@ describe "Helpers", ->
     passThroughTest "with a function", () ->
         "hello"
       , "hello"
+
+  describe 'getChildren', ->
+
+    imgNode = $ 'img', {}
+    node = $ 'div', {}, [
+      $ 'section', {}, [
+        imgNode
+      ]
+      $ 'article', {}, [
+        $ 'p', {}, "hello"
+      ]
+    ]
+
+    it 'getChild', ->
+      foundNode = $.getChildren node, ['img']
+      expect(foundNode).to.equal imgNode
+
+    it 'with two search', ->
+      foundNode = $.getChildren node, ['cover','img']
+      expect(foundNode).to.equal imgNode
+
+    it 'with two present search', ->
+      foundNode = $.getChildren node, ['img','p']
+      expect(foundNode).to.equal imgNode
