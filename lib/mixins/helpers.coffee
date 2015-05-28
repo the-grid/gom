@@ -57,10 +57,10 @@ module.exports = ($) ->
     return node.attributes.class.indexOf(name) isnt -1
 
   $.getChildren = (node, childTagNames) ->
-    if node.children instanceof Array
+    if node? and node.children instanceof Array
       for tagName in childTagNames
         for child in node.children
-          return child if child.tag is tagName
+          return child if child? and child.tag is tagName
 
       for child in node.children
         foundChild = $.getChildren(child, childTagNames)
