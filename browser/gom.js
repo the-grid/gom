@@ -189,11 +189,9 @@ module.exports = function($) {
     }
     foundChild = [];
     if (isChild && (ref = node != null ? node.tag : void 0, indexOf.call(childTagNames, ref) >= 0)) {
-      console.log("found child " + node.tag);
       foundChild.push(node);
     }
     if ((node != null ? node.children : void 0) != null) {
-      console.log("looking for child of " + node.tag);
       ref1 = node.children;
       for (j = 0, len = ref1.length; j < len; j++) {
         child = ref1[j];

@@ -72,11 +72,9 @@ module.exports = ($) ->
     foundChild = []
 
     if isChild and node?.tag in childTagNames
-      console.log "found child " + node.tag
       foundChild.push node
 
     if node?.children?
-      console.log "looking for child of " + node.tag
       for child in node.children
         childResult = $.getChildren(child, childTagNames,true)
         Array.prototype.push.apply(foundChild,childResult) if childResult?.length > 0
