@@ -221,24 +221,35 @@ describe("Helpers", function() {
       return "hello";
     }, "hello");
   });
-  return describe('getChildren', function() {
+  describe('getFirstDescendant', function() {
     var imgNode, node;
     imgNode = $('img', {});
     node = $('div', {}, [$('section', {}, [imgNode]), $('article', {}, [$('p', {}, "hello")])]);
-    it('getChild', function() {
+    it('getFirstDescendant', function() {
       var foundNode;
-      foundNode = $.getChildren(node, ['img']);
+      foundNode = $.getFirstDescendant(node, ['img']);
       return expect(foundNode).to.equal(imgNode);
     });
-    it('with two search', function() {
+    it('with two child tag names', function() {
       var foundNode;
-      foundNode = $.getChildren(node, ['cover', 'img']);
+      foundNode = $.getFirstDescendant(node, ['cover', 'img']);
       return expect(foundNode).to.equal(imgNode);
     });
-    return it('with two present search', function() {
+    return it('with two present child tag names', function() {
       var foundNode;
-      foundNode = $.getChildren(node, ['img', 'p']);
+      foundNode = $.getFirstDescendant(node, ['img', 'p']);
       return expect(foundNode).to.equal(imgNode);
+    });
+  });
+  return describe('getChildren', function() {
+    var imgNode, imgNode2, node;
+    imgNode = $('img', {});
+    imgNode2 = $('img', {});
+    node = $('div', {}, [$('section', {}, [imgNode]), $('article', {}, [$('div', {}, [$('div', {}, [imgNode2])])])]);
+    return it('getChildren', function() {
+      var foundNodes;
+      foundNodes = $.getChildren(node, ['img']);
+      return expect(foundNodes != null ? foundNodes.length : void 0).to.equal(2);
     });
   });
 });

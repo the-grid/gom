@@ -164,7 +164,7 @@ describe "Helpers", ->
         "hello"
       , "hello"
 
-  describe 'getChildren', ->
+  describe 'getFirstDescendant', ->
 
     imgNode = $ 'img', {}
     node = $ 'div', {}, [
@@ -176,14 +176,32 @@ describe "Helpers", ->
       ]
     ]
 
-    it 'getChild', ->
-      foundNode = $.getChildren node, ['img']
+    it 'getFirstDescendant', ->
+      foundNode = $.getFirstDescendant node, ['img']
       expect(foundNode).to.equal imgNode
 
-    it 'with two search', ->
-      foundNode = $.getChildren node, ['cover','img']
+    it 'with two child tag names', ->
+      foundNode = $.getFirstDescendant node, ['cover','img']
       expect(foundNode).to.equal imgNode
 
-    it 'with two present search', ->
-      foundNode = $.getChildren node, ['img','p']
+    it 'with two present child tag names', ->
+      foundNode = $.getFirstDescendant node, ['img','p']
       expect(foundNode).to.equal imgNode
+
+  describe 'getChildren', ->
+
+    imgNode = $ 'img', {}
+    imgNode2 = $ 'img', {}
+
+    node = $ 'div', {}, [
+      $ 'section', {}, [imgNode]
+      $ 'article', {}, [
+        $ 'div', {}, [
+          $ 'div', {}, [imgNode2]
+        ]
+      ]
+    ]
+
+    it 'getChildren', ->
+      foundNodes = $.getChildren node, ['img']
+      expect(foundNodes?.length).to.equal 2

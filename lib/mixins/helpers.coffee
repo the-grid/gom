@@ -56,17 +56,32 @@ module.exports = ($) ->
   _hasClass = (node,name) ->
     return node.attributes.class.indexOf(name) isnt -1
 
-  $.getChildren = (node, childTagNames) ->
+  $.getFirstDescendant = (node, childTagNames) ->
     if node? and node.children instanceof Array
-      for tagName in childTagNames
+      for tagName in childTagNames #order are prioritize.
         for child in node.children
           return child if child? and child.tag is tagName
 
       for child in node.children
-        foundChild = $.getChildren(child, childTagNames)
+        foundChild = $.getFirstDescendant(child, childTagNames)
         return foundChild if foundChild
 
     return null
+
+  $.getChildren = (node,childTagNames,isChild=false) ->
+    foundChild = []
+
+    if isChild and node?.tag in childTagNames
+      console.log "found child " + node.tag
+      foundChild.push node
+
+    if node?.children?
+      console.log "looking for child of " + node.tag
+      for child in node.children
+        childResult = $.getChildren(child, childTagNames,true)
+        Array.prototype.push.apply(foundChild,childResult) if childResult?.length > 0
+
+    return foundChild
 
   $.setAttribute = (node,key,val) ->
     return node unless isNode(node)

@@ -158,15 +158,15 @@ module.exports = function($) {
   _hasClass = function(node, name) {
     return node.attributes["class"].indexOf(name) !== -1;
   };
-  $.getChildren = function(node, childTagNames) {
+  $.getFirstDescendant = function(node, childTagNames) {
     var child, foundChild, j, k, l, len, len1, len2, ref, ref1, tagName;
-    if (node.children instanceof Array) {
+    if ((node != null) && node.children instanceof Array) {
       for (j = 0, len = childTagNames.length; j < len; j++) {
         tagName = childTagNames[j];
         ref = node.children;
         for (k = 0, len1 = ref.length; k < len1; k++) {
           child = ref[k];
-          if (child.tag === tagName) {
+          if ((child != null) && child.tag === tagName) {
             return child;
           }
         }
@@ -174,13 +174,36 @@ module.exports = function($) {
       ref1 = node.children;
       for (l = 0, len2 = ref1.length; l < len2; l++) {
         child = ref1[l];
-        foundChild = $.getChildren(child, childTagNames);
+        foundChild = $.getFirstDescendant(child, childTagNames);
         if (foundChild) {
           return foundChild;
         }
       }
     }
     return null;
+  };
+  $.getChildren = function(node, childTagNames, isChild) {
+    var child, childResult, foundChild, j, len, ref, ref1;
+    if (isChild == null) {
+      isChild = false;
+    }
+    foundChild = [];
+    if (isChild && (ref = node != null ? node.tag : void 0, indexOf.call(childTagNames, ref) >= 0)) {
+      console.log("found child " + node.tag);
+      foundChild.push(node);
+    }
+    if ((node != null ? node.children : void 0) != null) {
+      console.log("looking for child of " + node.tag);
+      ref1 = node.children;
+      for (j = 0, len = ref1.length; j < len; j++) {
+        child = ref1[j];
+        childResult = $.getChildren(child, childTagNames, true);
+        if ((childResult != null ? childResult.length : void 0) > 0) {
+          Array.prototype.push.apply(foundChild, childResult);
+        }
+      }
+    }
+    return foundChild;
   };
   $.setAttribute = function(node, key, val) {
     if (!isNode(node)) {
