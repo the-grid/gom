@@ -12,7 +12,7 @@
 
 module.exports = (hooks={}) ->
 
-  $ = (tag, attributes, children, rest...) ->
+  $ = (tag, attributes = {}, children, rest...) ->
     hook = hooks[tag]
     return hook.apply $, [attributes, children, rest...] if hook
     return new Node tag, attributes, children

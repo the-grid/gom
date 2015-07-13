@@ -220,3 +220,8 @@ describe "GOM", ->
         """
           <div id="styled" style="background-color:blue; color:hsl(0,0%,0%); line-height:1.5;"></div>
         """
+
+
+    it "default value for attributes", ->
+      node = $ "div", null, []
+      expect(node.attributes).to.deep.equal {}
