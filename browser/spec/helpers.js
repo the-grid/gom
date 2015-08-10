@@ -244,12 +244,34 @@ describe("Helpers", function() {
   return describe('getChildren', function() {
     var imgNode, imgNode2, node;
     imgNode = $('img', {});
-    imgNode2 = $('img', {});
+    imgNode2 = $('img', {
+      "class": ['c1', 'c2']
+    });
     node = $('div', {}, [$('section', {}, [imgNode]), $('article', {}, [$('div', {}, [$('div', {}, [imgNode2])])])]);
-    return it('getChildren', function() {
+    it('getChildren by tag', function() {
       var foundNodes;
       foundNodes = $.getChildren(node, ['img']);
       return expect(foundNodes != null ? foundNodes.length : void 0).to.equal(2);
+    });
+    it('getChildren by attributes', function() {
+      var foundNodes;
+      foundNodes = $.getChildren(node, null, ['c1']);
+      return expect(foundNodes != null ? foundNodes.length : void 0).to.equal(1);
+    });
+    it('getChildren by tag and attributes', function() {
+      var foundNodes;
+      foundNodes = $.getChildren(node, ['img'], ['c1']);
+      return expect(foundNodes != null ? foundNodes.length : void 0).to.equal(1);
+    });
+    it('getChildren found no result by tag and with missing attributes', function() {
+      var foundNodes;
+      foundNodes = $.getChildren(node, ['img'], ['c1', 'c3']);
+      return expect(foundNodes != null ? foundNodes.length : void 0).to.equal(0);
+    });
+    return it('getChildren found no result with missing tag and attributes', function() {
+      var foundNodes;
+      foundNodes = $.getChildren(node, ['div'], ['c1']);
+      return expect(foundNodes != null ? foundNodes.length : void 0).to.equal(0);
     });
   });
 });

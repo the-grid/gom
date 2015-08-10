@@ -3,3 +3,4 @@
 /spec/*.js
 /spec/*.xml
 flowhub.json
+npm-debug.log

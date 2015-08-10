@@ -68,15 +68,33 @@ module.exports = ($) ->
 
     return null
 
-  $.getChildren = (node,childTagNames,isChild=false) ->
+  $.getChildren = (node, childTagNames, classNames, isChild=false) ->
+    return null unless childTagNames or classNames
     foundChild = []
 
-    if isChild and node?.tag in childTagNames
-      foundChild.push node
+    if isChild
+      matches = false
+
+      if childTagNames
+        matches = true if node?.tag in childTagNames
+      else
+        matches = true
+
+      if matches and classNames
+        if node.attributes?.class?
+          matches = true
+          for c in classNames
+            if node.attributes.class.indexOf(c) is -1
+              matches = false
+              break
+        else
+          matches = false
+
+      foundChild.push node if matches
 
     if node?.children?
       for child in node.children
-        childResult = $.getChildren(child, childTagNames,true)
+        childResult = $.getChildren(child, childTagNames, classNames, true)
         Array.prototype.push.apply(foundChild,childResult) if childResult?.length > 0
 
     return foundChild

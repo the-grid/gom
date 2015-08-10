@@ -191,7 +191,7 @@ describe "Helpers", ->
   describe 'getChildren', ->
 
     imgNode = $ 'img', {}
-    imgNode2 = $ 'img', {}
+    imgNode2 = $ 'img', {class:['c1','c2']}
 
     node = $ 'div', {}, [
       $ 'section', {}, [imgNode]
@@ -202,6 +202,22 @@ describe "Helpers", ->
       ]
     ]
 
-    it 'getChildren', ->
+    it 'getChildren by tag', ->
       foundNodes = $.getChildren node, ['img']
       expect(foundNodes?.length).to.equal 2
+
+    it 'getChildren by attributes', ->
+      foundNodes = $.getChildren node, null, ['c1']
+      expect(foundNodes?.length).to.equal 1
+
+    it 'getChildren by tag and attributes', ->
+      foundNodes = $.getChildren node, ['img'], ['c1']
+      expect(foundNodes?.length).to.equal 1
+
+    it 'getChildren found no result by tag and with missing attributes', ->
+      foundNodes = $.getChildren node, ['img'], ['c1', 'c3']
+      expect(foundNodes?.length).to.equal 0
+
+    it 'getChildren found no result with missing tag and attributes', ->
+      foundNodes = $.getChildren node, ['div'], ['c1']
+      expect(foundNodes?.length).to.equal 0
