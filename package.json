@@ -32,7 +32,7 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-mocha-phantomjs": "0.6.2",
     "grunt-noflo-browser": "0.1.11",
-    "html-minifier": "0.7.2",
+    "html-minifier": "0.8.0",
     "mocha": "1.21.5"
   },
   "keywords": [],
