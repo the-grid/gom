@@ -19,7 +19,7 @@
   "dependencies": {
     "coffee-script": "1.10.0",
     "clone": "1.0.2",
-    "coffeeify": "1.1.0"
+    "coffeeify": "1.2.0"
   },
   "devDependencies": {
     "chai": "3.3.0",
