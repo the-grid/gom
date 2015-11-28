@@ -1,5 +1,13 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 before_script:
-  - npm install -g grunt-cli
+- npm install -g grunt-cli
+deploy:
+  provider: npm
+  email: team+gridbotds@thegrid.io
+  api_key:
+    secure: GW42LSouTe0L1EmQTqfecMD/xYyO5Q2eeQgKmheVCgDBWO6dbFcD4sHUi97z+SCjfLJDal3WQC/auKQ5u9dKShjhh9z+vnVFeT9cuoJsCGvSmrQ4uJeadpVtnIOdn8oX16ss4e1Zc0rM7IyVyHtCZhURVxMVnjw+LW5BfhLBbBU=
+  on:
+    tags: true
+    repo: the-grid/gom

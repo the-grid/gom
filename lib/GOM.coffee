@@ -16,13 +16,13 @@ module.exports = (hooks={}) ->
     hook = hooks[tag]
     return hook.apply $, [attributes, children, rest...] if hook
     return new Node tag, attributes, children
-  
+
   $.registerHook = (tag, cb) ->
     hooks[tag] = cb
-  
+
   $.notAttr = ['children','data']
   $.emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
-    
+
   require('./mixins/helpers')($)
   require('./mixins/render')($)
   require('./mixins/transform')($)
