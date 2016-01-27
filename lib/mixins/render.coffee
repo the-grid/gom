@@ -4,18 +4,18 @@ module.exports = ($) ->
   
   {notAttr, emptyTags} = $
   
-  $.render = render = (nodes) ->
-    return _render nodes if !(nodes instanceof Array)
+  $.render = render = (nodes, parent) ->
+    return _render nodes, parent if !(nodes instanceof Array)
     result = ""
     for node in nodes
-      result += _render node
+      result += _render node, parent
     result
 
-  _render = (node) ->
+  _render = (node, parent) ->
     return '' if !node
     return node if typeof node is 'string'
     return render node if node instanceof Array
-    return render node() if typeof node is 'function'
+    return render node(parent) if typeof node is 'function'
 
     {tag,attributes,children} = node
 
@@ -26,16 +26,16 @@ module.exports = ($) ->
 
     return "" if !tag
     return """<#{tag}#{_renderAttr(attributes)}/>""" if emptyTags.indexOf(tag) >= 0
-    return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children)}</#{tag}>"""
+    return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children, node)}</#{tag}>"""
 
-  _renderChildren = (children) ->
+  _renderChildren = (children, parent) ->
     return '' if children?.length <= 0
     html = ''
     for child in children
       if typeof child is 'string'
         html += child
       else
-        html += render child
+        html += render child, parent
     return html
 
   _renderStyles = (o) ->
