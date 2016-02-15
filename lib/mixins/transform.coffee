@@ -1,17 +1,20 @@
 module.exports = ($) ->
 
   $.transform = transform = (nodes, transforms, args...) ->
-    transforms = [transforms] unless transforms instanceof Array
+    unless transforms instanceof Array
+      transforms = [transforms]
     return _transform nodes, transforms, args
 
   _transform = (nodes, transforms, args) ->
     # return if falsy child
     return nodes unless nodes?
 
-    return _transformNodes(nodes, transforms, args) if nodes instanceof Array
+    if nodes instanceof Array
+      return _transformNodes(nodes, transforms, args)
 
     # if child is function, evaluate it
-    return _transform(node(), transforms, args) if typeof node is 'function'
+    if typeof node is 'function'
+      return _transform(node(), transforms, args)
 
     return _transformNode nodes, transforms, args
 
@@ -20,14 +23,16 @@ module.exports = ($) ->
     for node in nodes
       newNode = _transform node, transforms, args
       # removes falsy children
-      newNodes.push(newNode) if newNode
+      if newNode
+        newNodes.push(newNode)
     newNodes
 
   _transformNode = (node, transforms, args) ->
 
     # Pass transforms & parent element to callback
     args = args?.slice() || [args]
-    args.push(null) unless args.length
+    unless args.length
+      args.push(null)
     args.unshift node
     args.push(transforms)
     # recurse children first
@@ -42,7 +47,8 @@ module.exports = ($) ->
 
       else if typeof t is 'object'
         for selector, callback of t
-          node = callback.apply $, args if node.tag is selector
+          if node.tag is selector
+            node = callback.apply $, args
 
     node
 
