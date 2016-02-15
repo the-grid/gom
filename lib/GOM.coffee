@@ -12,7 +12,7 @@
 
 module.exports = (hooks={}) ->
 
-  create_gom_node = require './node'
+  create_gom_node = require './gom_node'
 
   $ = (tag, attributes, children, rest...) ->
     hook = hooks[tag]
