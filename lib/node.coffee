@@ -1,24 +1,18 @@
 module.exports = do ->
 
-  class Node
+  create_gom_node = (tag, attributes, children) ->
+    if attributes?.children
+      children = attributes.children
+      delete attributes.children
+    else if children? and children not instanceof Array
+      children = [children]
 
-    constructor: (tag,attributes,children)->
-      tag or tag='div'
-      #attributes or attributes={}
-      #children or children=[]
-      @tag = tag
+    return {
+      _class: 'gom_node'
 
-      if attributes
-        @attributes = attributes
-      #@attributes.class or @attributes.class = []
+      attributes
+      children
+      tag: tag || 'div'
+    }
 
-      if attributes?.children
-        children = attributes.children
-        delete attributes.children
-      else if children? and !(children instanceof Array)
-        children = [children]
-
-      if children
-        @children = children
-
-  return Node
+  return create_gom_node

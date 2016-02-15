@@ -12,11 +12,13 @@
 
 module.exports = (hooks={}) ->
 
+  create_gom_node = require './node'
+
   $ = (tag, attributes, children, rest...) ->
     hook = hooks[tag]
     if hook
       return hook.apply $, [attributes, children, rest...]
-    return new Node tag, attributes, children
+    return create_gom_node tag, attributes, children
 
   $.registerHook = (tag, cb) ->
     hooks[tag] = cb
@@ -28,7 +30,5 @@ module.exports = (hooks={}) ->
   require('./mixins/helpers')($)
   require('./mixins/render')($)
   require('./mixins/transform')($)
-
-  Node = require './node'
 
   return $

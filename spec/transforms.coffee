@@ -176,21 +176,26 @@ describe "Transforms", ->
           ]
 
         expect(tree).to.eql
+          _class: 'gom_node'
           tag: 'post'
           attributes:data:{title:'Tis parent post!'}
           children:
             [
+              _class: "gom_node"
               tag: 'post'
               attributes:data:{title:'Tis child post!'}
+              children: undefined
             ]
 
       it 'transforms ast', ->
         tree = $.transform tree, transformations
         expect(tree).to.eql
+          _class: "gom_node"
           children:
             [
                 'Tis parent post!'
               ,
+                _class: "gom_node"
                 children:
                   [
                     'Tis child post!'
@@ -244,8 +249,13 @@ describe "Transforms", ->
         $ "IGNORE", null, node.children
 
       expect(result).to.deep.equal
+        _class: "gom_node"
+        attributes: null
         tag: "IGNORE"
         children: [
+          _class: "gom_node"
+          attributes: null
+          children: undefined
           tag: "IGNORE"
         ]
 
