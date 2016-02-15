@@ -3,8 +3,8 @@
 module.exports = ($) ->
 
   {
-    NOT_ATTR: notAttr
-    EMPTY_TAGS: emptyTags
+    NOT_ATTR
+    EMPTY_TAGS
   } = require './helpers'
 
   $.render = render = (nodes, parent) ->
@@ -28,7 +28,7 @@ module.exports = ($) ->
     children or children=[]
 
     return "" if !tag
-    return """<#{tag}#{_renderAttr(attributes)}/>""" if emptyTags.indexOf(tag) >= 0
+    return """<#{tag}#{_renderAttr(attributes)}/>""" if EMPTY_TAGS.indexOf(tag) >= 0
     return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children, node)}</#{tag}>"""
 
   _renderChildren = (children, parent) ->
@@ -55,7 +55,7 @@ module.exports = ($) ->
     attributes = ''
     return attributes if !o
     for key, val of o
-      continue unless notAttr.indexOf(key) is -1
+      continue unless NOT_ATTR.indexOf(key) is -1
       if key is 'style'
         val = _renderStyles val
       else
