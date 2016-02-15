@@ -7,7 +7,8 @@ module.exports = ($) ->
 
   _transform = (nodes, transforms, args) ->
     # return if falsy child
-    return nodes unless nodes?
+    unless nodes?
+      return nodes
 
     if nodes instanceof Array
       return _transformNodes nodes, transforms, args
@@ -25,7 +26,7 @@ module.exports = ($) ->
       # removes falsy children
       if newNode
         newNodes.push newNode
-    newNodes
+    return newNodes
 
   _transformNode = (node, transforms, args) ->
 
@@ -50,6 +51,6 @@ module.exports = ($) ->
           if node.tag is selector
             node = callback.apply $, args
 
-    node
+    return node
 
-  $
+  return $
