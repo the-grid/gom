@@ -20,6 +20,7 @@ module.exports = (hooks={}) ->
 
   $.registerHook = (tag, cb) ->
     hooks[tag] = cb
+    return
 
   $.notAttr = ['children','data']
   $.emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
