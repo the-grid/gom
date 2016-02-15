@@ -8,17 +8,22 @@ module.exports = do ->
   } = require './helpers'
 
   render = (nodes, parent) ->
-    return _render nodes, parent if !(nodes instanceof Array)
+    if !(nodes instanceof Array)
+      return _render nodes, parent
     result = ""
     for node in nodes
       result += _render node, parent
     result
 
   _render = (node, parent) ->
-    return '' if !node
-    return node if typeof node is 'string'
-    return render node if node instanceof Array
-    return render node(parent) if typeof node is 'function'
+    if !node
+      return ''
+    if typeof node is 'string'
+      return node
+    if node instanceof Array
+      return render node
+    if typeof node is 'function'
+      return render node(parent)
 
     {tag,attributes,children} = node
 
@@ -27,12 +32,15 @@ module.exports = do ->
     attributes or attributes={}
     children or children=[]
 
-    return "" if !tag
-    return """<#{tag}#{_renderAttr(attributes)}/>""" if EMPTY_TAGS.indexOf(tag) >= 0
+    if !tag
+      return ""
+    if EMPTY_TAGS.indexOf(tag) >= 0
+      return """<#{tag}#{_renderAttr(attributes)}/>"""
     return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children, node)}</#{tag}>"""
 
   _renderChildren = (children, parent) ->
-    return '' if children?.length <= 0
+    if children?.length <= 0
+      return ''
     html = ''
     for child in children
       if typeof child is 'string'
@@ -42,10 +50,12 @@ module.exports = do ->
     return html
 
   _renderStyles = (o) ->
-    return o unless typeof o is "object"
+    unless typeof o is "object"
+      return o
     style = ""
     for key, val of o
-      val = String(val) if typeof val is 'number'
+      if typeof val is 'number'
+        val = String(val)
       style += key + ":" + val + "; "
     # remove last semi-colon and whitespace
     style = style.slice(0,style.length-2)
@@ -53,15 +63,19 @@ module.exports = do ->
 
   _renderAttr = (o) ->
     attributes = ''
-    return attributes if !o
+    if !o
+      return attributes
     for key, val of o
-      continue unless NOT_ATTR.indexOf(key) is -1
+      unless NOT_ATTR.indexOf(key) is -1
+        continue
       if key is 'style'
         val = _renderStyles val
       else
-        val = String(val) if typeof val is 'number'
+        if typeof val is 'number'
+          val = String(val)
       if val?.length > 0
-        continue unless key in ['class','style'] or typeof val is 'string'
+        unless key in ['class','style'] or typeof val is 'string'
+          continue
         attributes += " " + key + '="'
         if key is 'class' and val instanceof Array
           attributes += val.join(" ")
