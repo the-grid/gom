@@ -26,13 +26,14 @@ module.exports = (hooks={}) ->
     hooks[tag] = cb
     return
 
-  $.notAttr = ['children','data']
-  $.emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
-
   # could do this;
   # for key of helpers
   #   $[key] = helpers[key]
   # but being explicit makes for easier debugging, so:
+
+  # TOFIX: do we need to expose these properties? or only used in ./render?
+  $.notAttr = helpers.NOT_ATTR
+  $.emptyTags = helpers.EMPTY_TAGS
 
   $.addClass = helpers.addClass
   $.append = helpers.append

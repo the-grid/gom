@@ -1,9 +1,12 @@
 # render mixin
 
 module.exports = ($) ->
-  
-  {notAttr, emptyTags} = $
-  
+
+  {
+    NOT_ATTR: notAttr
+    EMPTY_TAGS: emptyTags
+  } = require './helpers'
+
   $.render = render = (nodes, parent) ->
     return _render nodes, parent if !(nodes instanceof Array)
     result = ""
@@ -66,5 +69,5 @@ module.exports = ($) ->
           attributes += val
         attributes += '"'
     return attributes
-  
+
   $

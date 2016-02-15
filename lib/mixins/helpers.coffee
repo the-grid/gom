@@ -2,6 +2,25 @@ clone = require 'clone'
 
 module.exports = do ->
 
+  NOT_ATTR = [
+    'children'
+    'data'
+  ]
+
+  EMPTY_TAGS = [
+    'br'
+    'hr'
+    'meta'
+    'link'
+    'base'
+    'img'
+    'embed'
+    'param'
+    'area'
+    'col'
+    'input'
+  ]
+
   isNode = (node) ->
     return node? and (typeof node is 'object') and !(node instanceof Array)
 
@@ -141,6 +160,9 @@ module.exports = do ->
     return children1.concat children2
 
   return {
+    EMPTY_TAGS
+    NOT_ATTR
+
     addClass
     append
     getAttribute
