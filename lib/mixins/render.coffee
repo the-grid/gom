@@ -1,13 +1,13 @@
 # render mixin
 
-module.exports = ($) ->
+module.exports = do ->
 
   {
     NOT_ATTR
     EMPTY_TAGS
   } = require './helpers'
 
-  $.render = render = (nodes, parent) ->
+  render = (nodes, parent) ->
     return _render nodes, parent if !(nodes instanceof Array)
     result = ""
     for node in nodes
@@ -70,4 +70,4 @@ module.exports = ($) ->
         attributes += '"'
     return attributes
 
-  $
+  return render

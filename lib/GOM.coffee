@@ -15,6 +15,7 @@ module.exports = (hooks={}) ->
   create_gom_node = require './gom_node'
   helpers = require './mixins/helpers'
   transform = require './mixins/transform'
+  render = require './mixins/render'
 
   $ = (tag, attributes, children, rest...) ->
     hook = hooks[tag]
@@ -48,8 +49,7 @@ module.exports = (hooks={}) ->
   $.removeClass = helpers.removeClass
   $.setAttribute = helpers.setAttribute
 
-  require('./mixins/render')($)
-
+  $.render = render
   $.transform = transform
 
   return $
