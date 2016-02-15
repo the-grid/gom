@@ -43,9 +43,6 @@ module.exports = do ->
     return """<#{tag}#{_renderAttr attributes}>#{_renderChildren children, node}</#{tag}>"""
 
   _renderChildren = (children, parent) ->
-    # TOFIX: drop the `?`, the `for` crashes if it were required (in fact we can just drop the condition entirely for same result)
-    if children?.length <= 0
-      return ''
     html = ''
     for child in children
       if typeof child is 'string'
@@ -68,9 +65,6 @@ module.exports = do ->
 
   _renderAttr = (o) ->
     attributes = ''
-    # can probably be dropped (in js, `for (x in undefined) ..` is a noop. same for `null`).
-    if !o
-      return attributes
     for key, val of o
       unless NOT_ATTR.indexOf(key) is -1
         continue
