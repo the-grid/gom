@@ -23,22 +23,27 @@ module.exports = do ->
     if node instanceof Array
       return render node
     if typeof node is 'function'
-      return render node(parent)
+      return render node parent
 
-    {tag,attributes,children} = node
+    {
+      tag
+      attributes
+      children
+    } = node
 
     # in case JSON passed
-    tag or tag='div'
-    attributes or attributes={}
-    children or children=[]
+    tag ||= 'div'
+    attributes ||= {}
+    children ||= []
 
     if !tag
       return ""
     if EMPTY_TAGS.indexOf(tag) >= 0
-      return """<#{tag}#{_renderAttr(attributes)}/>"""
-    return """<#{tag}#{_renderAttr(attributes)}>#{_renderChildren(children, node)}</#{tag}>"""
+      return """<#{tag}#{_renderAttr attributes}/>"""
+    return """<#{tag}#{_renderAttr attributes}>#{_renderChildren children, node}</#{tag}>"""
 
   _renderChildren = (children, parent) ->
+    # TOFIX: drop the `?`, the `for` crashes if it were required (in fact we can just drop the condition entirely for same result)
     if children?.length <= 0
       return ''
     html = ''
@@ -55,14 +60,15 @@ module.exports = do ->
     style = ""
     for key, val of o
       if typeof val is 'number'
-        val = String(val)
+        val = String val
       style += key + ":" + val + "; "
     # remove last semi-colon and whitespace
-    style = style.slice(0,style.length-2)
+    style = style.slice 0, -2
     return style.trim()
 
   _renderAttr = (o) ->
     attributes = ''
+    # can probably be dropped (in js, `for (x in undefined) ..` is a noop. same for `null`).
     if !o
       return attributes
     for key, val of o
@@ -72,7 +78,7 @@ module.exports = do ->
         val = _renderStyles val
       else
         if typeof val is 'number'
-          val = String(val)
+          val = String val
       if val?.length > 0
         unless key in ['class','style'] or typeof val is 'string'
           continue
