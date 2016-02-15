@@ -10,11 +10,11 @@ module.exports = ($) ->
     return nodes unless nodes?
 
     if nodes instanceof Array
-      return _transformNodes(nodes, transforms, args)
+      return _transformNodes nodes, transforms, args
 
     # if child is function, evaluate it
     if typeof node is 'function'
-      return _transform(node(), transforms, args)
+      return _transform node(), transforms, args
 
     return _transformNode nodes, transforms, args
 
@@ -24,7 +24,7 @@ module.exports = ($) ->
       newNode = _transform node, transforms, args
       # removes falsy children
       if newNode
-        newNodes.push(newNode)
+        newNodes.push newNode
     newNodes
 
   _transformNode = (node, transforms, args) ->
@@ -32,9 +32,9 @@ module.exports = ($) ->
     # Pass transforms & parent element to callback
     args = args?.slice() || [args]
     unless args.length
-      args.push(null)
+      args.push null
     args.unshift node
-    args.push(transforms)
+    args.push transforms
     # recurse children first
     # otherwise wrapping transforms = infinite loop
     if node.children?
