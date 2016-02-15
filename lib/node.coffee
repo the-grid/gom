@@ -20,3 +20,5 @@ module.exports = do ->
 
       if children
         @children = children
+
+  return Node
