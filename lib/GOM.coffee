@@ -14,7 +14,8 @@ module.exports = (hooks={}) ->
 
   $ = (tag, attributes, children, rest...) ->
     hook = hooks[tag]
-    return hook.apply $, [attributes, children, rest...] if hook
+    if hook
+      return hook.apply $, [attributes, children, rest...]
     return new Node tag, attributes, children
 
   $.registerHook = (tag, cb) ->
@@ -45,7 +46,8 @@ module.exports = (hooks={}) ->
       else if children? and !(children instanceof Array)
         children = [children]
 
-      @children = children if children
+      if children
+        @children = children
 
       @
 
