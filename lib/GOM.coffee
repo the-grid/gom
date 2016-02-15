@@ -13,6 +13,7 @@
 module.exports = (hooks={}) ->
 
   create_gom_node = require './gom_node'
+  helpers = require './mixins/helpers'
 
   $ = (tag, attributes, children, rest...) ->
     hook = hooks[tag]
@@ -27,7 +28,24 @@ module.exports = (hooks={}) ->
   $.notAttr = ['children','data']
   $.emptyTags = ['br','hr','meta','link','base','img','embed','param','area','col','input']
 
-  require('./mixins/helpers')($)
+  # could do this;
+  # for key of helpers
+  #   $[key] = helpers[key]
+  # but being explicit makes for easier debugging, so:
+
+  $.addClass = helpers.addClass
+  $.append = helpers.append
+  $.getAttribute = helpers.getAttribute
+  $.getChildren = helpers.getChildren
+  $.getFirstDescendant = helpers.getFirstDescendant
+  $.hasClass = helpers.hasClass
+  $.isNode = helpers.isNode
+  $.mergeAttributes = helpers.mergeAttributes
+  $.mergeChildren = helpers.mergeChildren
+  $.prepend = helpers.prepend
+  $.removeClass = helpers.removeClass
+  $.setAttribute = helpers.setAttribute
+
   require('./mixins/render')($)
   require('./mixins/transform')($)
 

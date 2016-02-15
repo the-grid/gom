@@ -1,21 +1,21 @@
 clone = require 'clone'
 
-module.exports = ($) ->
+module.exports = do ->
 
-  isNode = $.isNode = (node) ->
+  isNode = (node) ->
     return node? and (typeof node is 'object') and !(node instanceof Array)
 
-  $.append = (parent,child) ->
+  append = (parent,child) ->
     return parent unless isNode parent
     parent.children = [] unless parent.children?
     parent.children.push child
 
-  $.prepend = (parent,child) ->
+  prepend = (parent,child) ->
     return parent unless isNode parent
     parent.children = [] unless parent.children?
     parent.children.splice 0, 0, child
 
-  $.addClass = (node,names) ->
+  addClass = (node,names) ->
     node.attributes = {} unless node.attributes?
     node.attributes.class = [] unless node.attributes.class?
     return _addClass(node,names) unless names instanceof Array
@@ -29,7 +29,7 @@ module.exports = ($) ->
     classes.push(name) if classes.indexOf(name) is -1
     classes
 
-  $.removeClass = (node,names) ->
+  removeClass = (node,names) ->
     return node unless node.attributes?
     return node unless node.attributes.class?
     return _addClass(node,names) unless names instanceof Array
@@ -44,7 +44,7 @@ module.exports = ($) ->
     classes.splice(i,1) if i isnt -1
     classes
 
-  $.hasClass = (node,names) ->
+  hasClass = (node,names) ->
     return false unless node.attributes?
     return false unless node.attributes.class?
     return _hasClass(node,names) unless names instanceof Array
@@ -56,19 +56,19 @@ module.exports = ($) ->
   _hasClass = (node,name) ->
     return node.attributes.class.indexOf(name) isnt -1
 
-  $.getFirstDescendant = (node, childTagNames) ->
+  getFirstDescendant = (node, childTagNames) ->
     if node? and node.children instanceof Array
       for tagName in childTagNames #order are prioritize.
         for child in node.children
           return child if child? and child.tag is tagName
 
       for child in node.children
-        foundChild = $.getFirstDescendant(child, childTagNames)
+        foundChild = getFirstDescendant(child, childTagNames)
         return foundChild if foundChild
 
     return null
 
-  $.getChildren = (node, childTagNames, classNames, isChild=false) ->
+  getChildren = (node, childTagNames, classNames, isChild=false) ->
     return null unless childTagNames or classNames
     foundChild = []
 
@@ -94,21 +94,21 @@ module.exports = ($) ->
 
     if node?.children?
       for child in node.children
-        childResult = $.getChildren(child, childTagNames, classNames, true)
+        childResult = getChildren(child, childTagNames, classNames, true)
         Array.prototype.push.apply(foundChild,childResult) if childResult?.length > 0
 
     return foundChild
 
-  $.setAttribute = (node,key,val) ->
+  setAttribute = (node,key,val) ->
     return node unless isNode(node)
     node.attributes = {} unless node.attributes?
     node.attributes[key] = val
     return node
 
-  $.getAttribute = (node,key) ->
+  getAttribute = (node,key) ->
     node?.attributes?[key]
 
-  $.mergeAttributes = (attributes1={},attributes2={},exclusions=[],concatString=false) ->
+  mergeAttributes = (attributes1={},attributes2={},exclusions=[],concatString=false) ->
     # merge shared key values where value is same type, preferring attributes1, otherwise fallback to attributes2
     attributes = {}
     for key, val of attributes1
@@ -133,11 +133,24 @@ module.exports = ($) ->
         attributes[key] = v2 unless key in exclusions
     return attributes
 
-  $.mergeChildren = (children1=[],children2=[]) ->
+  mergeChildren = (children1=[],children2=[]) ->
     if !(children1 instanceof Array)
       children1 = [children1]
     if !(children2 instanceof Array)
       children2 = [children2]
     return children1.concat children2
 
-  $
+  return {
+    addClass
+    append
+    getAttribute
+    getChildren
+    getFirstDescendant
+    hasClass
+    isNode
+    mergeAttributes
+    mergeChildren
+    prepend
+    removeClass
+    setAttribute
+  }
