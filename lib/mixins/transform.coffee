@@ -1,6 +1,6 @@
-module.exports = ($) ->
+module.exports = do ->
 
-  $.transform = transform = (nodes, transforms, args...) ->
+  transform = (nodes, transforms, args...) ->
     unless transforms instanceof Array
       transforms = [transforms]
     return _transform nodes, transforms, args
@@ -44,13 +44,13 @@ module.exports = ($) ->
     for t in transforms
 
       if typeof t is 'function'
-        node = t.apply $, args
+        node = t.apply null, args
 
       else if typeof t is 'object'
         for selector, callback of t
           if node.tag is selector
-            node = callback.apply $, args
+            node = callback.apply null, args
 
     return node
 
-  return $
+  return transform

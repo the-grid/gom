@@ -96,7 +96,7 @@ describe "Transforms", ->
     it 'wrap link tags / renders html', ->
       tree = $.transform tree, [
         "a": (node) ->
-          return @ 'span', {class:['wrap']}, [node]
+          return $ 'span', {class:['wrap']}, [node]
       ]
       expectHTML tree,
         """
@@ -143,9 +143,9 @@ describe "Transforms", ->
       tree = $.transform tree, [
         (node) ->
           return node unless node.tag is 'article'
-          return @transform node, [
+          return $.transform node, [
             "a": (node) ->
-              return @ 'span', {class:['wrap']}, [node]
+              return $ 'span', {class:['wrap']}, [node]
           ]
       ]
       expectHTML tree,
@@ -219,14 +219,14 @@ describe "Transforms", ->
           return node unless node.tag is 'post'
           {attributes, children} = node
           children or children = []
-          return @ 'div', {class:['post']}, [attributes?.data?.title].concat children
+          return $ 'div', {class:['post']}, [attributes?.data?.title].concat children
       ]
 
     describe "key-val selector transformation", ->
       test [
         "post": ({attributes,children}) ->
           children or children = []
-          return @ 'div', {class:['post']}, [attributes?.data?.title].concat children
+          return $ 'div', {class:['post']}, [attributes?.data?.title].concat children
       ]
 
     #it 'fails with missing data', ->
@@ -278,8 +278,8 @@ describe "Transforms", ->
       ]
 
       transforms = (node,parent) ->
-        parentId = @getAttribute parent, 'id'
-        @setAttribute node, 'parent-id', parentId if parentId?
+        parentId = $.getAttribute parent, 'id'
+        $.setAttribute node, 'parent-id', parentId if parentId?
         node
 
       result = $.transform tree, transforms
