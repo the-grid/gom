@@ -7,23 +7,30 @@ module.exports = do ->
     EMPTY_TAGS
   } = require './helpers'
 
-  render = (nodes, parent) ->
-    if !(nodes instanceof Array)
-      return _render nodes, parent
-    result = ""
-    for node in nodes
-      result += _render node, parent
-    result
+  NOT_FOUND = -1
 
-  _render = (node, parent) ->
-    if !node
+
+  render = (nodes, parent) ->
+    if nodes instanceof Array
+      return _render_nodes nodes, parent
+    return _render_node nodes, parent
+
+  _render_nodes = (nodes, parent) ->
+    result = ''
+    for node in nodes
+      result += render node, parent
+    return result
+
+  _render_node = (node, parent) ->
+    switch typeof node
+      when 'undefined'
+        return ''
+      when 'string'
+        return node
+      when 'function'
+        return render node parent
+    if node is null
       return ''
-    if typeof node is 'string'
-      return node
-    if node instanceof Array
-      return render node
-    if typeof node is 'function'
-      return render node parent
 
     {
       tag
@@ -36,52 +43,41 @@ module.exports = do ->
     attributes ||= {}
     children ||= []
 
-    if !tag
-      return ""
-    if EMPTY_TAGS.indexOf(tag) >= 0
-      return """<#{tag}#{_renderAttr attributes}/>"""
-    return """<#{tag}#{_renderAttr attributes}>#{_renderChildren children, node}</#{tag}>"""
+    attr = _renderAttr attributes
+    if EMPTY_TAGS.indexOf(tag) isnt NOT_FOUND
+      return "<#{tag}#{attr}/>"
+
+    body = _renderChildren children, node
+    return "<#{tag}#{attr}>#{body}</#{tag}>"
 
   _renderChildren = (children, parent) ->
     html = ''
     for child in children
-      if typeof child is 'string'
-        html += child
-      else
-        html += render child, parent
+      html += render child, parent
     return html
 
   _renderStyles = (o) ->
-    unless typeof o is "object"
+    unless typeof o is 'object'
       return o
-    style = ""
+    style = ''
     for key, val of o
-      if typeof val is 'number'
-        val = String val
-      style += key + ":" + val + "; "
+      style += "#{key}:#{val}; "
     # remove last semi-colon and whitespace
-    style = style.slice 0, -2
-    return style.trim()
+    return style.slice 0, -2
 
-  _renderAttr = (o) ->
+  _renderAttr = (attrs) ->
     attributes = ''
-    for key, val of o
-      unless NOT_ATTR.indexOf(key) is -1
-        continue
-      if key is 'style'
-        val = _renderStyles val
-      else
-        if typeof val is 'number'
+    for key, val of attrs
+      if NOT_ATTR.indexOf(key) is NOT_FOUND
+        if key is 'style'
+          val = _renderStyles val
+        else if key is 'class' and val instanceof Array
+          val = val.join ' '
+        else if typeof val is 'number'
           val = String val
-      if val?.length > 0
-        unless key in ['class','style'] or typeof val is 'string'
-          continue
-        attributes += " " + key + '="'
-        if key is 'class' and val instanceof Array
-          attributes += val.join(" ")
-        else
-          attributes += val
-        attributes += '"'
+
+        if typeof val is 'string' # and val.length isnt 0
+          attributes += " #{key}=\"#{val}\""
     return attributes
 
   return render
