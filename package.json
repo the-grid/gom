@@ -33,7 +33,7 @@
     "grunt-mocha-phantomjs": "0.6.2",
     "grunt-noflo-browser": "0.1.11",
     "html-minifier": "0.8.0",
-    "mocha": "2.3.3"
+    "mocha": "2.5.1"
   },
   "keywords": [],
   "scripts": {
